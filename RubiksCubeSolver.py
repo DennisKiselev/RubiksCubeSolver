@@ -1,5 +1,6 @@
 import random
 
+#Outputs the current state of the cube as text
 def printCube():
     print(greenFace)
     print(blueFace)
@@ -8,11 +9,21 @@ def printCube():
     print(whiteFace)
     print(yellowFace)
 
+#Makes a list of the keys in a dictionary
+#Takes a disctionary as an input, outputs a list
 def getList(dict):
     list = []
     for key in dict.keys():
         list.append(key)
     return list
+
+#Compares whether one list contains variables that are all contained in another list, but not necessarily in the same order.
+#Takes two lists as an input, outputs a boolean variable.
+def compareList(list1,list2):
+    for element in list1:
+        if not element in list2:
+            return False
+    return True
 
 def scrambleGen():
     moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
@@ -27,8 +38,16 @@ def scrambleGen():
         scramble.append(current)
     print(" ".join(scramble))
     cubeReset()
-    for key in scramble:
-        moveList[key]()
+    for move in scramble:
+        moveList[move]()
+
+def scrambleInput():
+    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    scramble = input('Input your custom scramble: ')
+    scramble = scramble.split()
+    cubeReset()
+    for move in scramble:
+        moveList[move]()
 
 def cubeReset():
     global greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace
@@ -237,12 +256,6 @@ def L2():
 def LP():
     [L() for i in range(3)]
 
-def compareList(list1,list2):
-    for corner in list1:
-        if not corner in list2:
-            return False
-    return True
-
 def colourConversion():
     colourChoice = input("Enter the colour for the cross that you wish to construct: ")
     cubeState = []
@@ -322,7 +335,7 @@ def validation():
         if [blueFace[1][1],whiteFace[1][1],redFace[1][1]] != orientationList[currentOrientation]:
             print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
     except:
-        pass
+        print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
 
     orientedCount = 0
     for colour in [greenFace[0][2],redFace[0][2],blueFace[0][2],orangeFace[0][2],greenFace[2][0],redFace[2][0],blueFace[2][0],orangeFace[2][0]]:
@@ -343,50 +356,277 @@ def validation():
     if orientedCount % 2 != 0:
         print('The cube has a twisted edge. Check that you have entered the edges correctly, or else they may be twisted.')
     
-    #check permutation parity
+    #Permutation parity is checked later in the solve, it's just much easier to program that way.
 
 def solve():
-    #White Cross:
-    #First it checks for which pieces have already been solved
+    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    #-=-=-=-=-=-=-=-=-=-=-=WHITE CROSS=-=-=-=-=-=-=-=-=-=-=-
+    #First it checks for which pieces have already been solved.
     solveMoves = []
-    whiteCrossSolved = False
-    while whiteCrossSolved == False:
+    whiteCrossSolved = [False,False,False,False]
+    while whiteCrossSolved != [True,True,True,True]:
         if whiteFace[0][1] == 'white' and greenFace[2][1] == 'green':
-            whiteCrossGreen = True
-        if whiteFace[1][2] == 'white' and orangeFace[2][1] == 'orange':
-            whiteCrossOrange = True
-        if whiteFace[2][1] == 'white' and blueFace[2][1] == 'blue':
-            whiteCrossBlue = True
+            whiteCrossSolved[0] = True
         if whiteFace[1][0] == 'white' and redFace[2][1] == 'red':
-            whiteCrossRed = True
+            whiteCrossSolved[1] = True
+        if whiteFace[2][1] == 'white' and blueFace[2][1] == 'blue':
+            whiteCrossSolved[2] = True
+        if whiteFace[1][2] == 'white' and orangeFace[2][1] == 'orange':
+            whiteCrossSolved[3] = True
+
+        #Solving the side face bottom slice.
+        if greenFace[2][1] == 'white':
+            possibleMoves = {'green':["F'",'D',"R'","D'"],'red':['F','L'],'blue':["F'","D'","R'",'D'],'orange':["F'","R'"]}
+            requiredMoves = possibleMoves[whiteFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if redFace[2][1] == 'white':
+            possibleMoves = {'green':["L'","F'"],'red':["L'",'D',"F'","D'"],'blue':['L','B'],'orange':["L'","D'","F'",'D']}
+            requiredMoves = possibleMoves[whiteFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if blueFace[2][1] == 'white':
+            possibleMoves = {'green':["B'",'D',"L'","D'"],'red':["B'","L'"],'blue':["B'","D'","L'",'D'],'orange':['B','R']}
+            requiredMoves = possibleMoves[whiteFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if orangeFace[2][1] == 'white':
+            possibleMoves = {'green':['R','F'],'red':["R'","D'","B'",'D'],'blue':["R'","B'"],'orange':["R'",'D',"B'","D'"]}
+            requiredMoves = possibleMoves[whiteFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        #Solving the up face.
+        if yellowFace[2][1] == 'white':
+            possibleMoves = {'green':['F2'],'red':['U','L2'],'blue':['U2','B2'],'orange':["U'",'R2']}
+            requiredMoves = possibleMoves[greenFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if yellowFace[1][0] == 'white':
+            possibleMoves = {'green':["U'",'F2'],'red':['L2'],'blue':['U','B2'],'orange':['U2','R2']}
+            requiredMoves = possibleMoves[redFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if yellowFace[0][1] == 'white':
+            possibleMoves = {'green':['U2','F2'],'red':["U'",'L2'],'blue':['B2'],'orange':['U','R2']}
+            requiredMoves = possibleMoves[blueFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if yellowFace[1][2] == 'white':
+            possibleMoves = {'green':['U','F2'],'red':['U2','L2'],'blue':["U'",'B2'],'orange':['R2']}
+            requiredMoves = possibleMoves[orangeFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
         
-        if whiteCrossGreen != None and whiteCrossOrange != None and whiteCrossBlue != None and whiteCrossRed != None:
-            whiteCrossSolved = True
+        #Solving the down face.
+        if greenFace[2][1] != 'green' and whiteFace[0][1] == 'white':
+            possibleMoves = {'red':['F2','U','L2'],'blue':['F2','U2','B2'],'orange':['F2',"U'",'R2']}
+            requiredMoves = possibleMoves[greenFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if redFace[2][1] != 'red' and whiteCrossSolved[1] == False and whiteFace[1][0] == 'white':
+            possibleMoves = {'green':['L2',"U'",'F2'],'blue':['L2','U','B2'],'orange':['L2','U2','R2']}
+            requiredMoves = possibleMoves[redFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if blueFace[2][1] != 'blue' and whiteCrossSolved[2] == False and whiteFace[2][1] == 'white':
+            possibleMoves = {'green':['B2','U2','F2'],'red':['B2',"U'",'L2'],'orange':['B2','U','R2']}
+            requiredMoves = possibleMoves[blueFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if orangeFace[2][1] != 'orange' and whiteCrossSolved[3] == False and whiteFace[1][2] == 'white':
+            possibleMoves = {'green':['R2','U','F2'],'red':['R2','U2','L2'],'blue':['R2',"U'",'B2']}
+            requiredMoves = possibleMoves[orangeFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        #Solving the side face top slice.
+        if greenFace[0][1] == 'white':
+            possibleMoves = {'green':["U'","R'",'F','R'],'red':["F'",'L','F'],'blue':["U'",'R',"B'","R'"],'orange':['F',"R'","F'"]}
+            requiredMoves = possibleMoves[yellowFace[2][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if redFace[0][1] == 'white':
+            possibleMoves = {'green':['L',"F'","L'"],'red':["U'","F'",'L','F'],'blue':["L'",'B','L'],'orange':["U'",'F',"R'","F'"]}
+            requiredMoves = possibleMoves[yellowFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if blueFace[0][1] == 'white':
+            possibleMoves = {'green':["U'",'L',"F'","L'"],'red':['B',"L'","B'"],'blue':["U'","L'",'B','L'],'orange':["B'",'R','B']}
+            requiredMoves = possibleMoves[yellowFace[0][1]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if orangeFace[0][1] == 'white':
+            possibleMoves = {'green':["R'",'F','R'],'red':['U',"F'",'L','F'],'blue':['R',"B'","R'"],'orange':['U','F',"R'","F'"]}
+            requiredMoves = possibleMoves[yellowFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        #Solving the side face middle slice.
+        if greenFace[1][2] == 'white':
+            possibleMoves = {'green':['D',"R'","D'"],'red':['D2',"R'",'D2'],'blue':["D'","R'",'D'],'orange':["R'"]}
+            requiredMoves = possibleMoves[orangeFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if greenFace[1][0] == 'white':
+            possibleMoves = {'green':["D'",'L','D'],'red':['L'],'blue':['D','L',"D'"],'orange':['D2','L','D2']}
+            requiredMoves = possibleMoves[redFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
         
-        clockwisePositions = ['green','red','blue','orange']
-        if whiteCrossGreen == None:
-            if whiteFace[0][1] == 'white':
-                F2()
-                solveMoves.append('F2')
-                if clockwisePositions.index(greenFace[0][1]) == 1:
-                    U()
-                    L2()
-                    solveMoves.append('U')
-                    solveMoves.append('L2')
-                elif clockwisePositions.index(greenFace[0][1]) == 2:
-                    U2()
-                    B2()
-                    solveMoves.append('U2')
-                    solveMoves.append('B2')
-                elif clockwisePositions.index(greenFace[0][1]) == 3:
-                    UP()
-                    R2()
-                    solveMoves.append("U'")
-                    solveMoves.append('R2')
-    print(solveMoves)                    
+        if redFace[1][2] == 'white':
+            possibleMoves = {'green':["F'"],'red':['D',"F'","D'"],'blue':['D2',"F'",'D2'],'orange':["D'","F'",'D']}
+            requiredMoves = possibleMoves[greenFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if redFace[1][0] == 'white':
+            possibleMoves = {'green':['D2','B','D2'],'red':["D'",'B','D'],'blue':['B'],'orange':['D','B',"D'"]}
+            requiredMoves = possibleMoves[blueFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if blueFace[1][2] == 'white':
+            possibleMoves = {'green':["D'","L'",'D'],'red':["L'"],'blue':['D',"L'","D'"],'orange':['D2',"L'",'D2']}
+            requiredMoves = possibleMoves[redFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if blueFace[1][0] == 'white':
+            possibleMoves = {'green':['D','R',"D'"],'red':['D2','R','D2'],'blue':["D'",'R','D'],'orange':['R']}
+            requiredMoves = possibleMoves[orangeFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if orangeFace[1][2] == 'white':
+            possibleMoves = {'green':['D2',"B'",'D2'],'red':["D'","B'",'D'],'blue':["B'"],'orange':['D',"B'","D'"]}
+            requiredMoves = possibleMoves[blueFace[1][0]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+        if orangeFace[1][0] == 'white':
+            possibleMoves = {'green':['F'],'red':['D','F',"D'"],'blue':['D2','F','D2'],'orange':["D'",'F','D']}
+            requiredMoves = possibleMoves[greenFace[1][2]]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+
+    #-=-=-=-=-=-=-=-=-=-=-=F2L=-=-=-=-=-=-=-=-=-=-=-
+    #First it checks for which pairs have already been solved.
+    F2Lsolved = [False,False,False,False]
+    while F2Lsolved != [True,True,True,True]:
+        if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
+            F2Lsolved[0] = True
+        if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
+            F2Lsolved[1] = True
+        if blueFace[1][0] == 'blue' and blueFace[2][0] == 'blue' and orangeFace[1][2] == 'orange' and orangeFace[2][2] == 'orange' and whiteFace[2][2] == 'white':
+            F2Lsolved[2] = True
+        if orangeFace[1][0] == 'orange' and orangeFace[2][0] == 'orange' and greenFace[1][2] == 'green' and greenFace[2][2] == 'green' and whiteFace[0][2] == 'white':
+            F2Lsolved[3] = True
+
+        #For the case when there is an unsolved corner in the green-red-white corner:
+        if 'white' in [greenFace[2][0],redFace[2][2],whiteFace[0][0]] and F2Lsolved[0] == False:
+            #Three moves required to take it out.
+            requiredMoves = ["L'","U'",'L']
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+            #
+
+    #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
+    tempSolveMoves = []
+    for i in range(len(solveMoves)):
+        try:
+            #Check for whether they have the same base:
+            if solveMoves[i][0] == tempSolveMoves[-1][0]:
+                #If the moves are indentical:
+                if solveMoves[i] == tempSolveMoves[-1]:
+                    try:
+                        #If they are both 2 moves, then they cancel to 0.
+                        if solveMoves[i][1] == '2' and tempSolveMoves[-1][1] == '2':
+                            tempSolveMoves.pop()
+                            continue
+                        #If they are both prime moves, they add to 2.
+                        else:
+                            tempSolveMoves.pop()
+                            tempSolveMoves.append(solveMoves[i][0]+'2')
+                            continue
+                    except:
+                        #If they are both base moves, they add to 2.
+                        tempSolveMoves.pop()
+                        tempSolveMoves.append(solveMoves[i][0]+'2')
+                        continue
+                #If either of them are 2 moves, but not both:
+                try:
+                    #If one of them is a 2 move and the other is a prime move they cancel to a base move.
+                    #This is guaranteed to break if one is a base move.
+                    if compareList(["'","2"],[solveMoves[i][1],tempSolveMoves[-1][1]]) == True:
+                        tempSolveMoves.pop()
+                        tempSolveMoves.append(solveMoves[i][0])
+                        continue
+                except:
+                    #If one of them is a 2 move and the other is a base move, they add to make a prime move.
+                    try:
+                        #By this point at least one is guaranteed to be a base move, so another try-except is required to check both using separate if statements.
+                        #This is because a base move cannot be indexed to the 1 position, so an error will occur on one of these two checks.
+                        if solveMoves[i][1] == '2':
+                            tempSolveMoves.pop()
+                            tempSolveMoves.append(solveMoves[i][0]+"'")
+                            continue
+                    except:
+                        if tempSolveMoves[-1][1] == '2':
+                            tempSolveMoves.pop()
+                            tempSolveMoves.append(solveMoves[i][0]+"'")
+                            continue
+                #Anything that makes it to this point can only be a prime move with a base move, which cancel to 0.
+                tempSolveMoves.pop()
+            else:
+                #If the two consecutive moves do not cancel each other out, nothing has to be done.
+                tempSolveMoves.append(solveMoves[i])
+        except:
+            #The first move cannot be checked.
+            tempSolveMoves.append(solveMoves[i])
+    solveMoves = [i[:] for i in tempSolveMoves]
+    print(" ".join(solveMoves))
 
 def main():
-    cubeReset()
-    colourConversion()
+    scrambleGen()
+    solve()
 
 main()
