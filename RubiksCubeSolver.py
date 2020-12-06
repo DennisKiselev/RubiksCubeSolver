@@ -546,29 +546,151 @@ def solve():
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
                 moveList[requiredMoves[i]]()
-    """
+
     #-=-=-=-=-=-=-=-=-=-=-=F2L=-=-=-=-=-=-=-=-=-=-=-
     #First it checks for which pairs have already been solved.
     F2Lsolved = [False,False,False,False]
     while F2Lsolved != [True,True,True,True]:
+        #Check if green-red-white pair is solved.
         if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
             F2Lsolved[0] = True
+        #Check if blue-red-white pair is solved.
         if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
             F2Lsolved[1] = True
+        #Check if blue-orange-white pair is solved.
         if blueFace[1][0] == 'blue' and blueFace[2][0] == 'blue' and orangeFace[1][2] == 'orange' and orangeFace[2][2] == 'orange' and whiteFace[2][2] == 'white':
             F2Lsolved[2] = True
+        #Check if green-orange-white pair is solved.
         if orangeFace[1][0] == 'orange' and orangeFace[2][0] == 'orange' and greenFace[1][2] == 'green' and greenFace[2][2] == 'green' and whiteFace[0][2] == 'white':
             F2Lsolved[3] = True
 
+        #This 2D array contains every edge in the middle horizontal slice.
+        #Will be useful when searching for edge piece in the middle slice later on.
+        horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
+
+        cornerEdgeReady = False
         #For the case when there is an unsolved corner in the green-red-white corner:
-        if 'white' in [greenFace[2][0],redFace[2][2],whiteFace[0][0]] and F2Lsolved[0] == False:
-            #Three moves required to take it out.
+        if 'white' in [greenFace[2][0],redFace[2][2],whiteFace[0][0]] and F2Lsolved[0] == False and cornerEdgeReady == False:
+            #The two non-white colours are stored to be used to find the matching edge.
+            edgeColours = [greenFace[2][0],redFace[2][2],whiteFace[0][0]]
+            edgeColours.pop(edgeColours.index('white'))
+            #Three moves required to take the corner.
             requiredMoves = ["L'","U'",'L']
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
                 moveList[requiredMoves[i]]()
-            #
-    """
+            #Search for the edge corresponding to this corner in the middle slice.
+            for i in range(len(horizontalEdgeList)):
+                if compareList(edgeColours,horizontalEdgeList[i]) == True:
+                    #If the edge is already positioned correctly, nothing has to be done.
+                    if compareList(['green','red'],edgeColours) == False:
+                        #Depending on which position the edge is found, these are the moves required.
+                        if i == 0:
+                            requiredMoves = ["L'","U'",'L']
+                        elif i == 1:
+                            requiredMoves = ['L',"U'","L'"]
+                        elif i == 2:
+                            requiredMoves = ["R'",'U','R']
+                        elif i == 3:
+                            requiredMoves = ['R',"U'","R'"]
+                        for i in range(len(requiredMoves)):
+                            solveMoves.append(requiredMoves[i])
+                            moveList[requiredMoves[i]]()
+            #The result should be that the edge and corner pieces are both in the top layer.
+            cornerEdgeReady = True
+
+        #For the case when there is an unsolved corner in the blue-red-white corner:
+        if 'white' in [blueFace[2][2],redFace[2][0],whiteFace[2][0]] and F2Lsolved[1] == False and cornerEdgeReady == False:
+            #The two non-white colours are stored to be used to find the matching edge.
+            edgeColours = [blueFace[2][2],redFace[2][0],whiteFace[2][0]]
+            edgeColours.pop(edgeColours.index('white'))
+            #Three moves required to take the corner.
+            requiredMoves = ['L','U',"L'"]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+            #Search for the edge corresponding to this corner in the middle slice.
+            for i in range(len(horizontalEdgeList)):
+                if compareList(edgeColours,horizontalEdgeList[i]) == True:
+                    #If the edge is already positioned correctly, nothing has to be done.
+                    if compareList(['blue','red'],edgeColours) == False:
+                        #Depending on which position the edge is found, these are the moves required.
+                        if i == 0:
+                            requiredMoves = ["L'","U'",'L']
+                        elif i == 1:
+                            requiredMoves = ['L','U',"L'"]
+                        elif i == 2:
+                            requiredMoves = ["R'",'U','R']
+                        elif i == 3:
+                            requiredMoves = ['R',"U'","R'"]
+                        for i in range(len(requiredMoves)):
+                            solveMoves.append(requiredMoves[i])
+                            moveList[requiredMoves[i]]()
+            #The result should be that the edge and corner pieces are both in the top layer.
+            cornerEdgeReady = True
+
+        #For the case when there is an unsolved corner in the blue-orange-white corner:
+        if 'white' in [blueFace[2][0],orangeFace[2][2],whiteFace[2][2]] and F2Lsolved[2] == False and cornerEdgeReady == False:
+            #The two non-white colours are stored to be used to find the matching edge.
+            edgeColours = [blueFace[2][0],orangeFace[2][2],whiteFace[2][2]]
+            edgeColours.pop(edgeColours.index('white'))
+            #Three moves required to take the corner.
+            requiredMoves = ["R'","U'",'R']
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+            #Search for the edge corresponding to this corner in the middle slice.
+            for i in range(len(horizontalEdgeList)):
+                if compareList(edgeColours,horizontalEdgeList[i]) == True:
+                    #If the edge is already positioned correctly, nothing has to be done.
+                    if compareList(['blue','orange'],edgeColours) == False:
+                        #Depending on which position the edge is found, these are the moves required.
+                        if i == 0:
+                            requiredMoves = ["L'","U'",'L']
+                        elif i == 1:
+                            requiredMoves = ['L',"U'","L'"]
+                        elif i == 2:
+                            requiredMoves = ["R'",'U','R']
+                        elif i == 3:
+                            requiredMoves = ['R',"U'","R'"]
+                        for i in range(len(requiredMoves)):
+                            solveMoves.append(requiredMoves[i])
+                            moveList[requiredMoves[i]]()
+            #The result should be that the edge and corner pieces are both in the top layer.
+            cornerEdgeReady = True
+
+        #For the case when there is an unsolved corner in the green-orange-white corner:
+        if 'white' in [greenFace[2][2],orangeFace[2][0],whiteFace[0][2]] and F2Lsolved[3] == False and cornerEdgeReady == False:
+            #The two non-white colours are stored to be used to find the matching edge.
+            edgeColours = [greenFace[2][2],orangeFace[2][0],whiteFace[0][2]]
+            edgeColours.pop(edgeColours.index('white'))
+            #Three moves required to take the corner.
+            requiredMoves = ['R','U',"R'"]
+            for i in range(len(requiredMoves)):
+                solveMoves.append(requiredMoves[i])
+                moveList[requiredMoves[i]]()
+            #Search for the edge corresponding to this corner in the middle slice.
+            for i in range(len(horizontalEdgeList)):
+                if compareList(edgeColours,horizontalEdgeList[i]) == True:
+                    #If the edge is already positioned correctly, nothing has to be done.
+                    if compareList(['green','orange'],edgeColours) == False:
+                        #Depending on which position the edge is found, these are the moves required.
+                        if i == 0:
+                            requiredMoves = ["L'",'U','L']
+                        elif i == 1:
+                            requiredMoves = ['L',"U'","L'"]
+                        elif i == 2:
+                            requiredMoves = ["R'",'U','R']
+                        elif i == 3:
+                            requiredMoves = ['R','U',"R'"]
+                        for i in range(len(requiredMoves)):
+                            solveMoves.append(requiredMoves[i])
+                            moveList[requiredMoves[i]]()
+            #The result should be that the edge and corner pieces are both in the top layer.
+            cornerEdgeReady = True
+
+        #For the case when an unsolved corner is not found on the bottom layer, a corner must be located on the top layer and a corresponding edge piece must be brought up to the top layer.
+
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
     for i in range(len(solveMoves)):
