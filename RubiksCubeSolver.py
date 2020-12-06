@@ -546,7 +546,7 @@ def solve():
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
                 moveList[requiredMoves[i]]()
-
+    """
     #-=-=-=-=-=-=-=-=-=-=-=F2L=-=-=-=-=-=-=-=-=-=-=-
     #First it checks for which pairs have already been solved.
     F2Lsolved = [False,False,False,False]
@@ -568,7 +568,7 @@ def solve():
                 solveMoves.append(requiredMoves[i])
                 moveList[requiredMoves[i]]()
             #
-
+    """
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
     for i in range(len(solveMoves)):
