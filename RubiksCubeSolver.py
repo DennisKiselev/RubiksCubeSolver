@@ -565,25 +565,31 @@ def solve():
             F2Lsolved[3] = True
 
         #This 2D array contains every edge in the middle horizontal slice.
-        #Will be useful when searching for edge piece in the middle slice later on.
         horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
-
-        cornerEdgeReady = False
+        #This 2D array holds the colours of the faces that correspond to the 2D array above.
+        edgeFaceList = [['green','red'],['blue','red'],['blue','orange'],['green','orange']]
+        #These will be useful when searching for an edge piece in the middle slice later on.
+        
+        #When there is an unsolved corner is in the bottom layer, it needs to be brought up to the top layer along with a corresponding edge piece.
         #For the case when there is an unsolved corner in the green-red-white corner:
         if 'white' in [greenFace[2][0],redFace[2][2],whiteFace[0][0]] and F2Lsolved[0] == False and cornerEdgeReady == False:
             #The two non-white colours are stored to be used to find the matching edge.
             edgeColours = [greenFace[2][0],redFace[2][2],whiteFace[0][0]]
             edgeColours.pop(edgeColours.index('white'))
-            #Three moves required to take the corner.
-            requiredMoves = ["L'","U'",'L']
-            for i in range(len(requiredMoves)):
-                solveMoves.append(requiredMoves[i])
-                moveList[requiredMoves[i]]()
+            #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
+            if compareList(['green','red'],edgeColours) == True:
+                pass
+            else:
+                #Three moves required to take the corner out.
+                requiredMoves = ["L'","U'",'L']
+                for i in range(len(requiredMoves)):
+                    solveMoves.append(requiredMoves[i])
+                    moveList[requiredMoves[i]]()
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
                     #If the edge is already positioned correctly, nothing has to be done.
-                    if compareList(['green','red'],edgeColours) == False:
+                    if compareList(edgeFaceList[i],edgeColours) == False:
                         #Depending on which position the edge is found, these are the moves required.
                         if i == 0:
                             requiredMoves = ["L'","U'",'L']
@@ -604,16 +610,20 @@ def solve():
             #The two non-white colours are stored to be used to find the matching edge.
             edgeColours = [blueFace[2][2],redFace[2][0],whiteFace[2][0]]
             edgeColours.pop(edgeColours.index('white'))
-            #Three moves required to take the corner.
-            requiredMoves = ['L','U',"L'"]
-            for i in range(len(requiredMoves)):
-                solveMoves.append(requiredMoves[i])
-                moveList[requiredMoves[i]]()
+            #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
+            if compareList(['blue','red'],edgeColours) == True:
+                pass
+            else:
+                #Three moves required to take the corner out.
+                requiredMoves = ['L','U',"L'"]
+                for i in range(len(requiredMoves)):
+                    solveMoves.append(requiredMoves[i])
+                    moveList[requiredMoves[i]]()
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
                     #If the edge is already positioned correctly, nothing has to be done.
-                    if compareList(['blue','red'],edgeColours) == False:
+                    if compareList(edgeFaceList[i],edgeColours) == False:
                         #Depending on which position the edge is found, these are the moves required.
                         if i == 0:
                             requiredMoves = ["L'","U'",'L']
@@ -634,16 +644,20 @@ def solve():
             #The two non-white colours are stored to be used to find the matching edge.
             edgeColours = [blueFace[2][0],orangeFace[2][2],whiteFace[2][2]]
             edgeColours.pop(edgeColours.index('white'))
-            #Three moves required to take the corner.
-            requiredMoves = ["R'","U'",'R']
-            for i in range(len(requiredMoves)):
-                solveMoves.append(requiredMoves[i])
-                moveList[requiredMoves[i]]()
+            #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
+            if compareList(['blue','orange'],edgeColours) == True:
+                pass
+            else:
+                #Three moves required to take the corner out.
+                requiredMoves = ["R'","U'",'R']
+                for i in range(len(requiredMoves)):
+                    solveMoves.append(requiredMoves[i])
+                    moveList[requiredMoves[i]]()
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
                     #If the edge is already positioned correctly, nothing has to be done.
-                    if compareList(['blue','orange'],edgeColours) == False:
+                    if compareList(edgeFaceList[i],edgeColours) == False:
                         #Depending on which position the edge is found, these are the moves required.
                         if i == 0:
                             requiredMoves = ["L'","U'",'L']
@@ -664,16 +678,20 @@ def solve():
             #The two non-white colours are stored to be used to find the matching edge.
             edgeColours = [greenFace[2][2],orangeFace[2][0],whiteFace[0][2]]
             edgeColours.pop(edgeColours.index('white'))
-            #Three moves required to take the corner.
-            requiredMoves = ['R','U',"R'"]
-            for i in range(len(requiredMoves)):
-                solveMoves.append(requiredMoves[i])
-                moveList[requiredMoves[i]]()
+            #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
+            if compareList(['green','orange'],edgeColours) == True:
+                pass
+            else:
+                #Three moves required to take the corner out.
+                requiredMoves = ['R','U',"R'"]
+                for i in range(len(requiredMoves)):
+                    solveMoves.append(requiredMoves[i])
+                    moveList[requiredMoves[i]]()
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
                     #If the edge is already positioned correctly, nothing has to be done.
-                    if compareList(['green','orange'],edgeColours) == False:
+                    if compareList(edgeFaceList[i],edgeColours) == False:
                         #Depending on which position the edge is found, these are the moves required.
                         if i == 0:
                             requiredMoves = ["L'",'U','L']
@@ -689,15 +707,13 @@ def solve():
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
-        #For the case when an unsolved corner is not found on the bottom layer, a corner must be located on the top layer and a corresponding edge piece must be brought up to the top layer.
-
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
     for i in range(len(solveMoves)):
         try:
             #Check for whether they have the same base:
             if solveMoves[i][0] == tempSolveMoves[-1][0]:
-                #If the moves are indentical:
+                #If the moves are identical:
                 if solveMoves[i] == tempSolveMoves[-1]:
                     try:
                         #If they are both 2 moves, then they cancel to 0.
@@ -748,7 +764,7 @@ def solve():
     print(" ".join(solveMoves))
 
 def main():
-    scrambleGen()
+    cubeReset()
     solve()
 
 main()
