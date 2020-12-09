@@ -594,6 +594,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
         
@@ -619,6 +620,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -644,6 +646,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -669,6 +672,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -704,6 +708,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -738,6 +743,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -772,6 +778,7 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
@@ -806,11 +813,97 @@ def solve():
                         for i in range(len(requiredMoves)):
                             solveMoves.append(requiredMoves[i])
                             moveList[requiredMoves[i]]()
+                        break
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
-        #Now the top layer has a corner and an edge, which can now be solved.
+        #Positioning the corner so that it can be solved:
+        edgeColours.append('white')
+        if compareList(edgeColours,[greenFace[0][0],redFace[0][2],yellowFace[2][0]]) == True:
+            edgeColours.pop('white')
+            for i in range (len(edgeFaceList)):
+                if compareList(edgeFaceList[i],edgeColours) == True:
+                    for _ in range(i):
+                        solveMoves.append('U')
+                        U()
+                break
+        elif compareList(edgeColours,[blueFace[0][2],redFace[0][0],yellowFace[0][0]]) == True:
+            edgeColours.pop('white')
+            for i in range (len(edgeFaceList)):
+                if compareList(edgeFaceList[i],edgeColours) == True:
+                    if i - 1 < 0:
+                        i = i + 4
+                    for _ in range(i-1):
+                        solveMoves.append('U')
+                        U()
+                break
+        elif compareList(edgeColours,[blueFace[0][0],orangeFace[0][2],yellowFace[0][2]]) == True:
+            edgeColours.pop('white')
+            for i in range (len(edgeFaceList)):
+                if compareList(edgeFaceList[i],edgeColours) == True:
+                    if i - 2 < 0:
+                        i = i + 4
+                    for _ in range(i-2):
+                        solveMoves.append('U')
+                        U()
+                break
+        elif compareList(edgeColours,[greenFace[0][2],orangeFace[0][0],yellowFace[2][2]]) == True:
+            edgeColours.pop('white')
+            for i in range (len(edgeFaceList)):
+                if compareList(edgeFaceList[i],edgeColours) == True:
+                    if i - 3 < 0:
+                        i = i + 4
+                    for _ in range(i-3):
+                        solveMoves.append('U')
+                        U()
+                break
         
+        #Now an algorithm can be performed.
+        if compareList(['green','red'],edgeColours) == True:
+            if redFace[0][2] == 'white':
+                #F2L 1
+                if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ['U','F',"U'","F'"]
+                #F2L 3
+                elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'green':
+                    requiredMoves = ["L'","U'",'L']
+                #F2L 5
+                elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'red':
+                    requiredMoves = ["U'",'F','U',"F'",'U2','F',"U'","F'"]
+                #F2L 7
+                elif blueFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    requiredMoves = ["U'",'F','U2',"F'",'U2','F',"U'","F'"]
+                #F2L 9
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'green':
+                    requiredMoves = ["U'",'F',"U'","F'",'U',"L'","U'",'L']
+                #F2L 11
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'green':
+                    requiredMoves = ["U'",'F','U2',"F'",'U',"L'","U'",'L']
+                #F2L 13
+                elif redFace[0][1] == 'red' and yellowFace[0][1] == 'green':
+                    requiredMoves = ['U',"L'",'U','L',"U'","L'","U'",'L']
+                #F2L 15
+                elif redFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    requiredMoves = ["L'",'U','L','U2','F','U',"F'"]
+                #F2L 33
+                elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
+                    requiredMoves = ["U'", 'F', "U'", "F'", 'U2', 'F', "U'", "F'"]
+                #F2L 35
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ["U'", 'F', 'U', "F'", 'U', "L'", "U'", 'L']
+            elif greenFace[0][0] == 'white':
+                #F2L 2:
+                if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["U'","L'",'U','L']
+                #http://algdb.net/puzzle/333/f2l
+
+                
+                
+                
+        
+        for i in range(len(requiredMoves)):
+            solveMoves.append(requiredMoves[i])
+            moveList[requiredMoves[i]]()
 
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
