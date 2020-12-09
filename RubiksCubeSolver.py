@@ -859,6 +859,7 @@ def solve():
                 break
         
         #Now an algorithm can be performed.
+        #http://algdb.net/puzzle/333/f2l
         if compareList(['green','red'],edgeColours) == True:
             if redFace[0][2] == 'white':
                 #F2L 1
@@ -892,10 +893,58 @@ def solve():
                 elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
                     requiredMoves = ["U'", 'F', 'U', "F'", 'U', "L'", "U'", 'L']
             elif greenFace[0][0] == 'white':
-                #F2L 2:
+                #F2L 2
                 if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
                     requiredMoves = ["U'","L'",'U','L']
-                #http://algdb.net/puzzle/333/f2l
+                #F2L 4
+                elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'red':
+                    requiredMoves = ["L'","U'",'L']
+                #F2L 6
+                elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'green':
+                    requiredMoves = ['U',"L'","U'",'L','U2',"L'",'U','L']
+                #F2L 8
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'green':
+                    requiredMoves = ['U',"L'",'U2','L','U2',"L'",'U','L']
+                #F2L 10
+                elif blueFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    requiredMoves = ['U',"L'",'U','L',"U'",'F','U',"F'"]
+                #F2L 12
+                elif redFace[0][1] == 'green' and yellowFace[1][0] == 'red':
+                    requiredMoves = ['U',"L'",'U2','L',"U'",'F','U',"F'"]
+                #F2L 14
+                elif greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["U'",'F',"U'","F'",'U','F','U',"F'"]
+                #F2L 16
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'green':
+                    requiredMoves = ['F',"U'","F'",'U2',"L'","U'",'L']
+                #F2L 34
+                elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
+                    requiredMoves = ['U',"L'",'U','L','U2',"L'",'U','L']
+                #F2L 36
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ['U2',"L'","U'",'L','U','F',"U'","F'"]
+            elif yellowFace[2][0] == 'white':
+                #F2L 17
+                if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ['F','U2',"F'","U'",'F','U',"F'"]
+                #F2L 18
+                elif redFace[0][1] == 'red' and yellowFace[1][0] == 'green':
+                    requiredMoves = ["L'",'U2','L','U',"L'","U'",'L']
+                #F2L 19
+                elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'red':
+                    requiredMoves = ['U','F','U2',"F'",'U','F',"U'","F'"]
+                #F2L 20
+                elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'green':
+                    requiredMoves = ["U'","L'",'U2','L',"U'","L'",'U','L']
+                #F2L 21
+                elif blueFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    requiredMoves = ['F','R','U2',"R'","F'"]
+                #F2L 22
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'green':
+                    requiredMoves = ["L'","B'",'U2','B','L']
+                #F2L 23
+
+                
 
                 
                 
