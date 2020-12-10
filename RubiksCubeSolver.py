@@ -858,10 +858,30 @@ def solve():
                         U()
                 break
         
-        #Now an algorithm can be performed.
-        #http://algdb.net/puzzle/333/f2l
+        #Now an algorithm can be performed, from http://algdb.net/puzzle/333/f2l.
+        #When solving for the green-red corner:
         if compareList(['green','red'],edgeColours) == True:
-            if redFace[0][2] == 'white':
+            if 'white' in [whiteFace[0][0],redFace[2][2],greenFace[2][0]]:
+                #Positioning the edge piece:
+                if redFace[0][1] == 'green' and yellowFace[1][0] == 'red':
+                    solveMoves.append("U'")
+                    UP()
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'green':
+                    solveMoves.append('U')
+                    U()
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'green':
+                    solveMoves.append('U2')
+                    U2()
+                elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'red':
+                    solveMoves.append('U')
+                    U()
+                elif blueFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    solveMoves.append('U2')
+                    U2()
+                elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'green':
+                    solveMoves.append("U'")
+                    UP()
+            if redFace[0][2] == 'white' and compareList(edgeColours,[yellowFace[2][0],greenFace[0][0]]) == True:
                 #F2L 1
                 if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
                     requiredMoves = ['U','F',"U'","F'"]
@@ -888,11 +908,11 @@ def solve():
                     requiredMoves = ["L'",'U','L','U2','F','U',"F'"]
                 #F2L 33
                 elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
-                    requiredMoves = ["U'", 'F', "U'", "F'", 'U2', 'F', "U'", "F'"]
+                    requiredMoves = ["U'",'F',"U'","F'",'U2','F',"U'","F'"]
                 #F2L 35
                 elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
-                    requiredMoves = ["U'", 'F', 'U', "F'", 'U', "L'", "U'", 'L']
-            elif greenFace[0][0] == 'white':
+                    requiredMoves = ["U'",'F','U',"F'",'U',"L'","U'",'L']
+            elif greenFace[0][0] == 'white' and compareList(edgeColours,[yellowFace[2][0],redFace[0][2]]) == True:
                 #F2L 2
                 if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
                     requiredMoves = ["U'","L'",'U','L']
@@ -923,7 +943,7 @@ def solve():
                 #F2L 36
                 elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
                     requiredMoves = ['U2',"L'","U'",'L','U','F',"U'","F'"]
-            elif yellowFace[2][0] == 'white':
+            elif yellowFace[2][0] == 'white' and compareList(edgeColours,[redFace[0][2],greenFace[0][0]]) == True:
                 #F2L 17
                 if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
                     requiredMoves = ['F','U2',"F'","U'",'F','U',"F'"]
@@ -943,11 +963,210 @@ def solve():
                 elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'green':
                     requiredMoves = ["L'","B'",'U2','B','L']
                 #F2L 23
-
-                
-
-                
-                
+                elif redFace[0][1] == 'green' and yellowFace[0][1] == 'red':
+                    requiredMoves = ['U','F',"U'","F'","U'",'F',"U'","F'",'U','F',"U'","F'"]
+                #F2L 24
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'green':
+                    requiredMoves = ["U'","L'",'U','L','U',"L'",'U','L',"U'","L'",'U','L']
+                #F2L 31
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ["L'",'U','L',"U'",'F',"U'",'F']
+                #F2L 32
+                elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
+                    requiredMoves = ["U'","L'",'U','L',"U'","L'",'U','L',"U'","L'",'U','L']
+            elif whiteFace[0][0] == 'white' and compareList(edgeColours,[redFace[2][2],greenFace[2][0]]) == True:
+                #F2L 25
+                if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["U'","L'",'U','L','U','F',"U'","F'"]
+                #F2L 26
+                elif redFace[0][1] == 'red' and yellowFace[1][0] == 'green':
+                    requiredMoves = ['U','F',"U'","F'","U'","L'",'U','L']
+                #F2L 37
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ['F','U',"F'",'U2','F','U2',"F'",'U',"L'","U'",'L']
+            elif redFace[2][2] == 'white' and compareList(edgeColours,[whiteFace[0][0],greenFace[2][0]]) == True:
+                #F2L 27
+                if greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ['F',"U'","F'",'U','F',"U'","F'"]
+                #F2L 29
+                elif greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["L'","U'",'L','U',"L'","U'",'L']
+                #F2L 38
+                elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
+                    requiredMoves = ["L'","U'",'L','U2',"L'",'U','L',"U'","L'","U'",'L']
+                #F2L 40
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ["L'","U'",'L','U',"L'",'U','L','U2','F','U',"F'"]
+            elif greenFace[2][0] == 'white' and compareList(edgeColours,[redFace[2][2],whiteFace[0][0]]) == True:
+                #F2L 28
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'green' :
+                    requiredMoves = ["L'",'U','L',"U'","L'",'U','L']
+                #F2L 30
+                elif greenFace[0][1] == 'green' and yellowFace[2][1] == 'red':
+                    requiredMoves = ['F','U',"F'","U'",'F','U',"F'"]
+                #F2L 39
+                elif greenFace[1][0] == 'green' and redFace[1][2] == 'red':
+                    requiredMoves = ['F','U',"F'",'U2',"F'","U'",'F',"U'",'F',"U'","F'"]
+                #F2L 41
+                elif greenFace[1][0] == 'red' and redFace[1][2] == 'green':
+                    requiredMoves = ['F','U',"F'","U'",'F',"U'","F'",'U2',"L'","U'",'L']
+        #When solving for the blue-red corner:
+        elif compareList(['blue','red'],edgeColours) == True:
+            if 'white' in [whiteFace[2][0],blueFace[2][2],redFace[2][0]]:
+                #Positioning the edge piece:
+                if blueFace[0][1] == 'red' and yellowFace[0][1] == 'blue':
+                    solveMoves.append("U'")
+                    UP()
+                elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'red':
+                    solveMoves.append('U')
+                    U()
+                elif greenFace[0][1] == 'blue' and yellowFace[2][1] == 'red':
+                    solveMoves.append('U2')
+                    U2()
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'blue':
+                    solveMoves.append('U')
+                    U()
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    solveMoves.append('U2')
+                    U2()
+                elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
+                    solveMoves.append("U'")
+                    UP()
+            if blueFace[0][2] == 'white' and compareList(edgeColours,[yellowFace[0][0],redFace[0][0]]) == True:
+                #F2L 1
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ['U','L',"U'","L'"]
+                #F2L 3
+                elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
+                    requiredMoves = ["B'","U'",'B']
+                #F2L 5
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'blue':
+                    requiredMoves = ["U'",'L','U',"L'",'U2','L',"U'","L'"]
+                #F2L 7
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    requiredMoves = ["U'",'L','U2',"L'",'U2','L',"U'","L'"]
+                #F2L 9
+                elif greenFace[0][1] == 'blue' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["U'",'L',"U'","L'",'U',"B'","U'",'B']
+                #F2L 11
+                elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'red':
+                    requiredMoves = ["U'",'L','U2',"L'",'U',"B'","U'",'B']
+                #F2L 13
+                elif blueFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
+                    requiredMoves = ['U',"B'",'U','B',"U'","B'","U'",'B']
+                #F2L 15
+                elif blueFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    requiredMoves = ["B'",'U','B','U2','L','U',"L'"]
+                #F2L 33
+                elif redFace[1][0] == 'red' and blueFace[1][2] == 'blue':
+                    requiredMoves = ["U'",'L',"U'","L'",'U2','L',"U'","L'"]
+                #F2L 35
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ["U'",'L','U',"L'",'U',"B'","U'",'B']
+            elif redFace[0][0] == 'white' and compareList(edgeColours,[yellowFace[0][0],blueFace[0][2]]) == True:
+                #F2L 2
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ["U'","B'",'U','B']
+                #F2L 4
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'blue':
+                    requiredMoves = ["B'","U'",'B']
+                #F2L 6
+                elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
+                    requiredMoves = ['U',"B'","U'",'B','U2',"B'",'U','B']
+                #F2L 8
+                elif greenFace[0][1] == 'blue' and yellowFace[2][1] == 'red':
+                    requiredMoves = ['U',"B'",'U2','B','U2',"B'",'U','B']
+                #F2L 10
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    requiredMoves = ['U',"B'",'U','B',"U'",'L','U',"L'"]
+                #F2L 12
+                elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'blue':
+                    requiredMoves = ['U',"B'",'U2','B',"U'",'L','U',"L'"]
+                #F2L 14
+                elif redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ["U'",'L',"U'","L'",'U','L','U',"L'"]
+                #F2L 16
+                elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'red':
+                    requiredMoves = ['L',"U'","L'",'U2',"B'","U'",'B']
+                #F2L 34
+                elif redFace[1][0] == 'red' and blueFace[1][2] == 'blue':
+                    requiredMoves = ['U',"B'",'U','B','U2',"B'",'U','B']
+                #F2L 36
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ['U2',"B'","U'",'B','U','L',"U'","L'"]
+            elif yellowFace[0][0] == 'white' and compareList(edgeColours,[blueFace[0][2],redFace[0][0]]) == True:
+                #F2L 17
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ['L','U2',"L'","U'",'L','U',"L'"]
+                #F2L 18
+                elif blueFace[0][1] == 'blue' and yellowFace[0][1] == 'red':
+                    requiredMoves = ["B'",'U2','B','U',"B'","U'",'B']
+                #F2L 19
+                elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'blue':
+                    requiredMoves = ['U','L','U2',"L'",'U','L',"U'","L'"]
+                #F2L 20
+                elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
+                    requiredMoves = ["U'","B'",'U2','B',"U'","B'",'U','B']
+                #F2L 21
+                elif orangeFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    requiredMoves = ['L','F','U2',"F'","L'"]
+                #F2L 22
+                elif greenFace[0][1] == 'blue' and yellowFace[2][1] == 'red':
+                    requiredMoves = ["B'","R'",'U2','R','B']
+                #F2L 23
+                elif blueFace[0][1] == 'red' and yellowFace[1][2] == 'blue':
+                    requiredMoves = ['U','L',"U'","L'","U'",'L',"U'","L'",'U','L',"U'","L'"]
+                #F2L 24
+                elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'red':
+                    requiredMoves = ["U'","B'",'U','B','U',"B'",'U','B',"U'","B'",'U','B']
+                #F2L 31
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ["B'",'U','B',"U'",'L',"U'",'L']
+                #F2L 32
+                elif redFace[1][0] == 'red' and blueFace[1][2] == 'blue':
+                    requiredMoves = ["U'","B'",'U','B',"U'","B'",'U','B',"U'","B'",'U','B']
+            elif whiteFace[2][0] == 'white' and compareList(edgeColours,[blueFace[2][2],redFace[2][0]]) == True:
+                #F2L 25
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ["U'","B'",'U','B','U','L',"U'","L'"]
+                #F2L 26
+                elif blueFace[0][1] == 'blue' and yellowFace[0][1] == 'red':
+                    requiredMoves = ['U','L',"U'","L'","U'","B'",'U','B']
+                #F2L 37
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ['L','U',"L'",'U2','L','U2',"L'",'U',"F'","U'",'F']
+            elif blueFace[2][2] == 'white' and compareList(edgeColours,[whiteFace[2][0],redFace[2][0]]) == True:
+                #F2L 27
+                if redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ['L',"U'","L'",'U','L',"U'","L'"]
+                #F2L 29
+                elif redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ["B'","U'",'B','U',"B'","U'",'B']
+                #F2L 38
+                elif redFace[1][0] == 'red' and blueFace[1][2] == 'blue':
+                    requiredMoves = ["B'","U'",'B','U2',"B'",'U','B',"U'","B'","U'",'B']
+                #F2L 40
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ["B'","U'",'B','U',"B'",'U','B','U2','L','U',"L'"]
+            elif redFace[2][0] == 'white' and compareList(edgeColours,[blueFace[2][2],whiteFace[2][0]]) == True:
+                #F2L 28
+                if blueFace[0][1] == 'blue' and yellowFace[0][1] == 'red':
+                    requiredMoves = ["B'",'U','B',"U'","B'",'U','B']
+                #F2L 30
+                elif redFace[0][1] == 'red' and yellowFace[1][0] == 'blue':
+                    requiredMoves = ['L','U',"L'","U'",'L','U',"L'"]
+                #F2L 39
+                elif redFace[1][0] == 'red' and blueFace[1][2] == 'blue':
+                    requiredMoves = ['L','U',"L'",'U2',"L'","U'",'L',"U'",'L',"U'","L'"]
+                #F2L 41
+                elif redFace[1][0] == 'blue' and blueFace[1][2] == 'red':
+                    requiredMoves = ['L','U',"L'","U'",'L',"U'","L'",'U2',"B'","U'",'B']
+        
+        #red -> blue -> orange -> green -> red
+        #F -> L -> B -> R -> F
+        #white[0][0] -> whiteFace[2][0]
+        #yellowFace[1][0] -> yellowFace[0][1] -> yellowFace[1][2] -> yellowFace[2][1] - > yellowFace[1][0]
+        #yellowFace[2][0] -> yellowFace[0][0]
                 
         
         for i in range(len(requiredMoves)):
