@@ -52,12 +52,12 @@ def scrambleInput():
 
 def cubeReset():
     global greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace
-    greenFace = (["green","green","green"],["green","green","green"],["green","green","green"])
-    blueFace = (["blue","blue","blue"],["blue","blue","blue"],["blue","blue","blue"])
-    redFace = (["red","red","red"],["red","red","red"],["red","red","red"])
-    orangeFace = (["orange","orange","orange"],["orange","orange","orange"],["orange","orange","orange"])
-    whiteFace = (["white","white","white"],["white","white","white"],["white","white","white"])
-    yellowFace = (["yellow","yellow","yellow"],["yellow","yellow","yellow"],["yellow","yellow","yellow"])
+    greenFace = [["green","green","green"],["green","green","green"],["green","green","green"]]
+    blueFace = [["blue","blue","blue"],["blue","blue","blue"],["blue","blue","blue"]]
+    redFace = [["red","red","red"],["red","red","red"],["red","red","red"]]
+    orangeFace = [["orange","orange","orange"],["orange","orange","orange"],["orange","orange","orange"]]
+    whiteFace = [["white","white","white"],["white","white","white"],["white","white","white"]]
+    yellowFace = [["yellow","yellow","yellow"],["yellow","yellow","yellow"],["yellow","yellow","yellow"]]
 
 def U():
     tempGreenFace = [i[:] for i in greenFace]
@@ -1479,6 +1479,42 @@ def solve():
             solveMoves.append(requiredMoves[i])
             moveList[requiredMoves[i]]()
 
+    #-=-=-=-=-=-=-=-=-=-=-=OLL=-=-=-=-=-=-=-=-=-=-=-
+    requiredMoves = []
+    #If OLL is complete, an algorithm does not need to be performed.
+    if yellowFace != [['yellow','yellow','yellow'],['yellow','yellow','yellow'],['yellow','yellow','yellow']]:
+        for _ in range(4):
+            #OLL 1
+            if [greenFace[0][1],redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves == ['R', 'U2', 'R2', 'F', 'R', "F'", 'U2', "R'", 'F', 'R', "F'"]
+            #Oll 2
+            elif [greenFace[0][1],greenFace[0][2],redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][0],blueFace[0][1],orangeFace[0][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves == ['F', 'R', 'U', "R'", "U'", "F'", 'U2', 'F', 'U', 'R', "U'", "R'", "F'"]
+            #OLL 3
+            elif [greenFace[0][1],greenFace[0][2],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][1],orangeFace[0][2],yellowFace[0][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'U', 'R', "U'", "R'", "F'", 'U', 'F', 'R', 'U', "R'", "U'", "F'"]
+            #OLL 4
+            elif [greenFace[0][1],redFace[0][0],redFace[0][1],blueFace[0][0],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],yellowFace[2][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'U', 'R', "U'", "R'", "F'", "U'", 'F', 'R', 'U', "R'", "U'", "F'"]
+            #OLL 5
+            elif [redFace[0][1],redFace[0][2],blueFace[0][1],blueFace[0][2],orangeFace[0][2],yellowFace[1][2],yellowFace[2][1],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'R', 'U', "R'", "U'", "F'", "U'", 'F', 'R', 'U', "R'", "U'", "F'"]
+            #OLL 6
+            elif [redFace[0][0],blueFace[0][0],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],yellowFace[1][0],yellowFace[2][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U', 'R2', 'F', 'R', 'F2', 'U', 'F']
+            #OLL 7
+            elif [greenFace[0][1],greenFace[0][2],blueFace[0][2],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[1][0],yellowFace[2][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', "R'", "F'", 'R', 'U2', 'R', 'U2', "R'"]
+            #OLL 8
+            elif [greenFace[0][0],greenFace[0][1],redFace[0][0],redFace[0][1],blueFace[0][0],yellowFace[0][1],yellowFace[1][2],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U2', "R'", 'U2', "R'", 'F', 'R', "F'"]
+            #OLL 9
+            elif [greenFace[0][0],greenFace[0][1],redFace[0][0],blueFace[0][0],orangeFace[0][1],yellowFace[0][1],yellowFace[1][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U', "R'", "U'", "R'", 'F', 'R2', 'U', "R'", "U'", "F'"]
+            #OLL 10
+            elif [greenFace[0][2],redFace[0][2],blueFace[0][1],blueFace[0][2],orangeFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U', "R'", 'U', "R'", 'F', 'R', "F'", 'R', 'U2', "R'"]
+
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
     for i in range(len(solveMoves)):
@@ -1544,6 +1580,7 @@ def meanMoves():
     print(statistics.mean(lengths))
 
 def main():
-    meanMoves()
+    scrambleGen()
+    solve()
 
 main()
