@@ -1477,13 +1477,17 @@ def solve():
     requiredMoves = []
     #If OLL is complete, an algorithm does not need to be performed.
     if yellowFace != [['yellow','yellow','yellow'],['yellow','yellow','yellow'],['yellow','yellow','yellow']]:
+        #Through the use of a for loop and U turns, the state of the yellow face can be cycled into every possible positions.
+        #This grants the benefit of not needing to program extra algorithms for each orientation of the yellow face.
         for _ in range(4):
+            U()
+            solveMoves.append('U')
             #OLL 1
             if [greenFace[0][1],redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
-                requiredMoves == ['R', 'U2', 'R2', 'F', 'R', "F'", 'U2', "R'", 'F', 'R', "F'"]
+                requiredMoves = ['R', 'U2', 'R2', 'F', 'R', "F'", 'U2', "R'", 'F', 'R', "F'"]
             #Oll 2
             elif [greenFace[0][1],greenFace[0][2],redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][0],blueFace[0][1],orangeFace[0][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
-                requiredMoves == ['F', 'R', 'U', "R'", "U'", "F'", 'U2', 'F', 'U', 'R', "U'", "R'", "F'"]
+                requiredMoves = ['F', 'R', 'U', "R'", "U'", "F'", 'U2', 'F', 'U', 'R', "U'", "R'", "F'"]
             #OLL 3
             elif [greenFace[0][1],greenFace[0][2],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][1],orangeFace[0][2],yellowFace[0][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['F', 'U', 'R', "U'", "R'", "F'", 'U', 'F', 'R', 'U', "R'", "U'", "F'"]
@@ -1542,7 +1546,7 @@ def solve():
             elif [greenFace[0][0],greenFace[0][2],blueFace[0][0],blueFace[0][2],yellowFace[0][1],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['F', 'R', 'U', "R'", "U'", 'R', 'U', "R'", "U'", 'R', 'U', "R'", "U'", "F'"]
             #OLL 22
-            elif [greenFace[0][2],redFace[0][0],redFace[0][2],greenFace[0][0],yellowFace[0][1],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+            elif [greenFace[0][2],redFace[0][0],redFace[0][2],blueFace[0][0],yellowFace[0][1],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['R', 'U2', 'R2', "U'", 'R2', "U'", 'R2', 'U2', 'R']
             #OLL 23
             elif [greenFace[0][0],greenFace[0][0],yellowFace[0][0],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
@@ -1554,7 +1558,7 @@ def solve():
             elif [greenFace[0][0],orangeFace[0][2],yellowFace[0][0],yellowFace[0][1],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ["R'", 'F', 'R', "B'", "R'", "F'", 'R', 'B']
             #OLL 26
-            elif [greenFace[0][0],redFace[0][2],orangeFace[0][0],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+            elif [greenFace[0][0],redFace[0][0],orangeFace[0][0],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['R', 'U2', "R'", "U'", 'R', "U'", "R'"]
             #OLL 27
             elif [greenFace[0][2],blueFace[0][2],orangeFace[0][2],yellowFace[0][1],yellowFace[1][0],yellowFace[1][2],yellowFace[2][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
@@ -1563,7 +1567,7 @@ def solve():
             elif [greenFace[0][1],orangeFace[0][1],yellowFace[0][0],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['F', 'R', 'U', "R'", "U'", 'F2', "L'", "U'", 'L', 'U', 'F']
             #OLL 29
-            elif [greenFace[0][0],greenFace[0][1],blueFace[0][2],orangeFace[0][1],yellowFace[0][0],yellowFace[0][2],yellowFace[1][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+            elif [greenFace[0][0],greenFace[0][1],blueFace[0][2],orangeFace[0][1],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['R', 'U', "R'", "U'", 'R', "U'", "R'", "F'", "U'", 'F', 'R', 'U', "R'"]
             #OLL 30
             elif [greenFace[0][1],redFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[1][0],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
@@ -1598,6 +1602,64 @@ def solve():
             #OLL 40
             elif [greenFace[0][1],redFace[0][2],blueFace[0][0],blueFace[0][1],yellowFace[0][0],yellowFace[1][0],yellowFace[1][2],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ["R'", 'F', 'R', 'U', "R'", "U'", "F'", 'U', 'R']
+            #OLL 41
+            elif [greenFace[0][1],blueFace[0][0],blueFace[0][2],orangeFace[0][1],yellowFace[0][1],yellowFace[1][0],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U', "R'", 'U', 'R', 'U2', "R'", 'F', 'R', 'U', "R'", "U'", "F'"]
+            #OLL 42
+            elif [greenFace[0][1],redFace[0][1],blueFace[0][0],blueFace[0][2],yellowFace[0][1],yellowFace[1][2],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["R'", 'U', 'R', 'U2', "R'", "U'", "F'", 'U', 'F', 'U', 'R']
+            #OLL 43
+            elif [greenFace[0][0],greenFace[0][1],greenFace[0][2],orangeFace[0][1],yellowFace[0][0],yellowFace[0][1],yellowFace[0][2],yellowFace[1][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["R'", "U'", "F'", 'U', 'F', 'R']
+            #OLL 44
+            elif [greenFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][0],yellowFace[0][1],yellowFace[1][0],yellowFace[2][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'U', 'R', "U'", "R'", "F'"]
+            #OLL 45
+            elif [greenFace[0][1],redFace[0][0],redFace[0][2],blueFace[0][1],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'R', 'U', "R'", "U'", "F'"]
+            #OLL 46
+            elif [redFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][0],yellowFace[0][1],yellowFace[2][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["R'", "U'", "R'", 'F', 'R', "F'", 'U', 'R']
+            #OLL 47
+            elif [greenFace[0][0],greenFace[0][1],redFace[0][1],blueFace[0][2],orangeFace[0][0],orangeFace[0][2],yellowFace[0][1],yellowFace[1][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["F'", "L'", "U'", 'L', 'U', "L'", "U'", 'L', 'U', 'F']
+            #OLL 48
+            elif [greenFace[0][1],greenFace[0][2],redFace[0][0],redFace[0][2],blueFace[0][0],orangeFace[0][1],yellowFace[0][1],yellowFace[1][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'R', 'U', "R'", "U'", 'R', 'U', "R'", "U'", "F'"]
+            #OLL 49
+            elif [greenFace[0][0],greenFace[0][1],greenFace[0][2],redFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[1][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', "R'", 'F2', 'R', 'U2', 'R', 'U2', "R'", 'F']
+            #OLL 50
+            elif [greenFace[0][0],greenFace[0][1],blueFace[0][2],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[1][0]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["R'", 'F', 'R2', "B'", 'R2', "F'", 'R2', 'B', "R'"]
+            #OLL 51
+            elif [greenFace[0][0],greenFace[0][1],blueFace[0][1],blueFace[0][2],orangeFace[0][0],orangeFace[0][2],yellowFace[1][0],yellowFace[1][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'U', 'R', "U'", "R'", 'U', 'R', "U'", "R'", "F'"]
+            #OLL 52
+            elif [greenFace[0][0],redFace[0][1],blueFace[0][2],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["R'", "U'", 'R', "U'", "R'", 'U', "F'", 'U', 'F', 'R']
+            #OLL 53
+            elif [redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][2],yellowFace[1][2],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["F'", 'L', 'F', "L'", 'U2', 'F2', "R'", "F'", 'R', "F'"]
+            #OLL 54
+            elif [redFace[0][0],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[1][0],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', "R'", "F'", 'R', 'U2', 'F2', 'L', 'F', "L'", 'F']
+            #OLL 55
+            elif [redFace[0][0],redFace[0][1],redFace[0][2],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2],yellowFace[0][1],yellowFace[2][1]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['R', 'U2', 'R2', "U'", 'R', "U'", "R'", 'U2', 'F', 'R', "F'"]
+            #OLL 56
+            elif [greenFace[0][1],redFace[0][0],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][2],yellowFace[1][0],yellowFace[1][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ['F', 'R', 'U', "R'", "U'", 'R', "F'", 'L', 'F', "R'", "F'", "L'"]
+            #OLL 57
+            elif [greenFace[0][1],blueFace[0][1],yellowFace[0][0],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
+                requiredMoves = ["L'", 'R', 'U', "R'", "U'", 'L', "R'", 'F', 'R', "F'"]
+            
+            if yellowFace != [['yellow','yellow','yellow'],['yellow','yellow','yellow'],['yellow','yellow','yellow']]:
+                for i in range(len(requiredMoves)):
+                    solveMoves.append(requiredMoves[i])
+                    moveList[requiredMoves[i]]()
+            else:
+                break
 
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
@@ -1664,7 +1726,6 @@ def meanMoves():
     print(statistics.mean(lengths))
 
 def main():
-    scrambleGen()
-    solve()
+    meanMoves()
 
 main()
