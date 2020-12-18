@@ -1,15 +1,6 @@
 import random
 import statistics
 
-#Outputs the current state of the cube as text
-def printCube():
-    print(greenFace)
-    print(blueFace)
-    print(redFace)
-    print(orangeFace)
-    print(whiteFace)
-    print(yellowFace)
-
 #Makes a list of the keys in a dictionary
 #Takes a disctionary as an input, outputs a list
 def getList(dict):
@@ -26,32 +17,11 @@ def compareList(list1,list2):
             return False
     return True
 
-def scrambleGen():
-    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
-    scramble = []
-    for i in range(20):
-        current = random.choice(getList(moveList))
-        try:
-            while current[0] == scramble[i-1][0] or current[0] == scramble[i-2][0]:
-                current = random.choice(getList(moveList))
-        except:
-            pass
-        scramble.append(current)
-    print(" ".join(scramble))
-    cubeReset()
-    for move in scramble:
-        moveList[move]()
-
-def scrambleInput():
-    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
-    scramble = input('Input your custom scramble: ')
-    scramble = scramble.split()
-    cubeReset()
-    for move in scramble:
-        moveList[move]()
-
+#Resets the cube to its default state.
 def cubeReset():
     global greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace
+    #The cube is represented in six 3x3 arrays which represents each face.
+    #The default state is a single solid colour.
     greenFace = [["green","green","green"],["green","green","green"],["green","green","green"]]
     blueFace = [["blue","blue","blue"],["blue","blue","blue"],["blue","blue","blue"]]
     redFace = [["red","red","red"],["red","red","red"],["red","red","red"]]
@@ -59,12 +29,63 @@ def cubeReset():
     whiteFace = [["white","white","white"],["white","white","white"],["white","white","white"]]
     yellowFace = [["yellow","yellow","yellow"],["yellow","yellow","yellow"],["yellow","yellow","yellow"]]
 
+#Outputs the current state of the cube as text
+def printCube():
+    print(greenFace)
+    print(blueFace)
+    print(redFace)
+    print(orangeFace)
+    print(whiteFace)
+    print(yellowFace)
+
+#Generates a random 20 move length scramble.
+def scrambleGen():
+    #This dictionary contains every possible move and the name of the function it corresponds to.
+    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    scramble = []
+    for i in range(20):
+        #A random move is selected from the list of the keys of the moveList dictionary.
+        current = random.choice(getList(moveList))
+        try:
+            #Whenever a move has the same base as either of the two before it, a new one is generated until a valid one is found.
+            while current[0] == scramble[i-1][0] or current[0] == scramble[i-2][0]:
+                current = random.choice(getList(moveList))
+        except:
+            #The except is necessary for when the first move is checked, as there is no move before it to compare it to.
+            pass
+        #The move is then added to the scramble.
+        scramble.append(current)
+    #The complete scramble is outputted to the user.
+    print(" ".join(scramble))
+    #The cube needs to be in its default state before being scrambled.
+    cubeReset()
+    #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
+    for move in scramble:
+        moveList[move]()
+
+#Receives a custom scramble input and performs it.
+def scrambleInput():
+    #This dictionary contains every possible move and the name of the function it corresponds to.
+    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    scramble = input('Input your custom scramble: ')
+    #The input is split into a list to be performed.
+    scramble = scramble.split()
+    #The cube needs to be in its default state before being scrambled.
+    cubeReset()
+    #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
+    for move in scramble:
+        moveList[move]()
+
+#Performs a U move.
 def U():
+    #The state of the cube is copied to temporary lists which remain unchanged for the duration of the function.
+    #This is needed because otherwise the original colours would be written over and lost, while still being needed.
     tempGreenFace = [i[:] for i in greenFace]
     tempBlueFace = [i[:] for i in blueFace]
     tempRedFace = [i[:] for i in redFace]
     tempOrangeFace = [i[:] for i in orangeFace]
     tempYellowFace = [i[:] for i in yellowFace]
+    #This list of transformations replicates what turning the U face would do to a cube.
     greenFace[0][0] = tempOrangeFace[0][0]
     greenFace[0][1] = tempOrangeFace[0][1]
     greenFace[0][2] = tempOrangeFace[0][2]
@@ -86,12 +107,17 @@ def U():
     yellowFace[2][0] = tempYellowFace[2][2]
     yellowFace[1][0] = tempYellowFace[2][1]
 
+#Performs a U2 move.
 def U2():
+    #U2 is equivalent to 2 U moves.
     [U() for i in range(2)]
 
+#Performs a U' move.
 def UP():
+    #U' is equivalent to 3 U moves.
     [U() for i in range(3)]
 
+#Performs a D move.
 def D():
     tempGreenFace = [i[:] for i in greenFace]
     tempBlueFace = [i[:] for i in blueFace]
@@ -119,12 +145,15 @@ def D():
     whiteFace[2][0] = tempWhiteFace[2][2]
     whiteFace[1][0] = tempWhiteFace[2][1]
 
+#Performs a D2 move.
 def D2():
     [D() for i in range(2)]
 
+#Performs a D' move.
 def DP():
     [D() for i in range(3)]
 
+#Performs an F move.
 def F():
     tempGreenFace = [i[:] for i in greenFace]
     tempRedFace = [i[:] for i in redFace]
@@ -152,12 +181,15 @@ def F():
     greenFace[2][0] = tempGreenFace[2][2]
     greenFace[1][0] = tempGreenFace[2][1]
 
+#Performs an F2 move.
 def F2():
     [F() for i in range(2)]
 
+#Performs an F' move.
 def FP():
     [F() for i in range(3)]
 
+#Performs a B move.
 def B():
     tempBlueFace = [i[:] for i in blueFace]
     tempRedFace = [i[:] for i in redFace]
@@ -185,12 +217,15 @@ def B():
     blueFace[2][0] = tempBlueFace[2][2]
     blueFace[1][0] = tempBlueFace[2][1]
 
+#Performs a B2 move.
 def B2():
     [B() for i in range(2)]
 
+#Performs a B' move.
 def BP():
     [B() for i in range(3)]
 
+#Performs an R move.
 def R():
     tempGreenFace = [i[:] for i in greenFace]
     tempBlueFace = [i[:] for i in blueFace]
@@ -218,12 +253,15 @@ def R():
     orangeFace[2][0] = tempOrangeFace[2][2]
     orangeFace[1][0] = tempOrangeFace[2][1]
 
+#Performs an R2 move.
 def R2():
     [R() for i in range(2)]
 
+#Performs an R' move.
 def RP():
     [R() for i in range(3)]
 
+#Performs an L move.
 def L():
     tempGreenFace = [i[:] for i in greenFace]
     tempBlueFace = [i[:] for i in blueFace]
@@ -251,9 +289,11 @@ def L():
     redFace[2][0] = tempRedFace[2][2]
     redFace[1][0] = tempRedFace[2][1]
 
+#Performs an L2 move.
 def L2():
     [L() for i in range(2)]
 
+#Performs an L' move.
 def LP():
     [L() for i in range(3)]
 
@@ -278,23 +318,30 @@ def colourConversion():
         cubeState[5] = [[tempCubeState[1][2][2],tempCubeState[1][2][1],tempCubeState[1][2][0]],[tempCubeState[1][1][2],tempCubeState[1][1][1],tempCubeState[1][1][0]],[tempCubeState[1][0][2],tempCubeState[1][0][1],tempCubeState[1][0][0]]]
     print(cubeState)
 
+#Validates the cube for everything other than permutation parity.
 def validation():
     cubeState = []
+    #cubeState is a 2D array made up of 18 sublists which contain every row on the cube.
+    #It is useful for counting the number of a certain colour in a few lines of code.
     cubeState.extend([greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace])
+    #These integer variables keep track of how many of a certain colour has been found.
+    #A proper input should have 9 of each colour. If this is not the case, the input must be wrong, and the user is notified.
     greenCount = 0
     blueCount = 0
     redCount = 0
     orangeCount = 0
     whiteCount = 0
     yellowCount = 0
-    for face in cubeState:
-        for colour in face:
+    for row in cubeState:
+        for colour in row:
+            #For every colour in every row, every colour is checked and added to the count.
             greenCount = greenCount + colour.count("green")
             blueCount = blueCount + colour.count("blue")
             redCount = redCount + colour.count("red")
             orangeCount = orangeCount + colour.count("orange")
             whiteCount = whiteCount + colour.count("white")
             yellowCount = yellowCount + colour.count("yellow")
+    #If the number times a certain colour appears is not 9, the user is told which colour it is, how many there are, and how many there should be.
     if greenCount != 9:
         print("The cube is invalid. The number of green coloured pieces is "+str(greenCount)+", but it should be 9.")
     if blueCount != 9:
@@ -308,17 +355,25 @@ def validation():
     if yellowCount != 9:
         print("The cube is invalid. The number of yellow coloured pieces is "+str(yellowCount)+", but it should be 9.")
     
+    #The cube needs to be checked for whether it has exactly one of each possible corner type.
+    #cornerList is a 2D tuple which contains lists of every possible combination of colours on a corner.
     cornerList = (['yellow','red','green'],['yellow','orange','green'],['yellow','orange','blue'],['yellow','red','blue'],['white','red','green'],['white','orange','green'],['white','orange','blue'],['white','red','blue'])
+    #corners is a 2D array which contains information on what the colours of the corners of the cube that has been given are.
     corners = [[yellowFace[2][0],redFace[0][2],greenFace[0][0]],[yellowFace[2][2],orangeFace[0][0],greenFace[0][2]],[yellowFace[0][2],orangeFace[0][2],blueFace[0][0]],[yellowFace[0][0],redFace[0][0],blueFace[0][2]],[whiteFace[0][0],redFace[2][2],greenFace[2][0]],[whiteFace[0][2],orangeFace[2][0],greenFace[2][2]],[whiteFace[2][2],orangeFace[2][2],blueFace[2][0]],[whiteFace[2][0],redFace[2][0],blueFace[2][2]]]
+    #cornerCheck is a list which says False 8 times. It keeps track of which corners have been found to be valid.
     cornerCheck = [False for i in range(8)]
     for i in range (8):
         for j in range (8):
+            #For every corner in the list 'corners', the list 'cornerList' is searched for whether it contains a list with the same colours, in any order.
             if compareList(cornerList[i],corners[j]) == True:
+                #If such a list is found, cornerCheck is updated to say True for that index, meaning that corner has been found.
                 cornerCheck[i] = True
     for i in range (8):
+        #After validating, if False is anywhere in cornerCheck, then that corner must not have been found, so the user is notified which corner is missing.
         if cornerCheck[i] == False:
             print("The cube is missing a corner with the colours "+cornerList[i][0]+", "+cornerList[i][1]+", and "+cornerList[i][2]+".")
 
+    #Edge validation is done in exactly the same manner as corner validation, with a longer list.
     edgeList = (['yellow','green'],['yellow','orange'],['yellow','blue'],['yellow','red'],['green','orange'],['orange','blue'],['blue','red'],['red','green'],['white','green'],['white','orange'],['white','blue'],['white','red'])
     edges = [[yellowFace[2][1],greenFace[0][1]],[yellowFace[1][2],orangeFace[0][1]],[yellowFace[0][1],blueFace[0][1]],[yellowFace[1][0],redFace[0][1]],[greenFace[1][2],orangeFace[1][0]],[orangeFace[1][2],blueFace[1][0]],[blueFace[1][2],redFace[1][0]],[redFace[1][2],greenFace[1][0]],[whiteFace[0][1],greenFace[2][1]],[whiteFace[1][2],orangeFace[2][1]],[whiteFace[2][1],blueFace[2][1]],[whiteFace[1][0],redFace[2][1]]]
     edgeCheck = [False for i in range(12)]
@@ -330,30 +385,44 @@ def validation():
         if edgeCheck[i] == False:
             print("The cube is missing an edge with the colours "+cornerList[i][0]+" and "+cornerList[i][1]+".")
     
+    #The center pieces has to be validated for whether the way that they are orientated relative to one another is possible.
+    #This dictionary contains every single possible way that the cube could be oriented, and how the rest of the center pieces would have to be positioned.
     orientationList = {('green','yellow','orange'):['blue','white','red'],('green','red','yellow'):['blue','orange','white'],('green','white','red'):['blue','yellow','orange'],('green','orange','white'):['blue','red','yellow'],('blue','yellow','red'):['green','white','orange'],('blue','orange','yellow'):['green','red','white'],('blue','white','orange'):['green','yellow','red'],('blue','red','white'):['green','orange','yellow'],('red','yellow','green'):['orange','white','blue'],('red','blue','yellow'):['orange','green','white'],('red','white','blue'):['orange','yellow','green'],('red','green','white'):['orange','blue','yellow'],('orange','yellow','blue'):['red','white','green'],('orange','green','yellow'):['red','blue','white'],('orange','white','green'):['red','yellow','blue'],('orange','blue','white'):['red','green','yellow'],('white','green','orange'):['yellow','blue','red'],('white','red','green'):['yellow','orange','blue'],('white','blue','red'):['yellow','green','orange'],('white','orange','blue'):['yellow','red','green'],('yellow','green','red'):['white','blue','orange'],('yellow','orange','green'):['white','red','blue'],('yellow','blue','orange'):['white','green','red'],('yellow','red','blue'):['white','orange','green']}
+    #currentOrientation acts as the key for the dictionary which corresponds to the cube that has been input.
     currentOrientation = (greenFace[1][1],yellowFace[1][1],orangeFace[1][1])
     try:
+        #If the rest of the center pieces are not as defined by the dictionary, then the the cube is invalid and the user is notified.
         if [blueFace[1][1],whiteFace[1][1],redFace[1][1]] != orientationList[currentOrientation]:
             print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
     except:
+        #This try-except is required in the case that the input does not have a center orientation that works as a key to the dictionary.
+        #If this is the case, then the cube is invalid and the user is notified.
         print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
 
+    #The corner twist validation works by a mathematical method, explained in the design.
     orientedCount = 0
     for colour in [greenFace[0][2],redFace[0][2],blueFace[0][2],orangeFace[0][2],greenFace[2][0],redFace[2][0],blueFace[2][0],orangeFace[2][0]]:
+        #For each yellow or white colour in a position that is one clockwise turn away from being oriented on every corner, orientedCount is increased by 1.
         if colour == 'white' or colour == 'yellow':
             orientedCount = orientedCount + 1
     for colour in [greenFace[0][0],redFace[0][0],blueFace[0][0],orangeFace[0][0],greenFace[2][2],redFace[2][2],blueFace[2][2],orangeFace[2][2]]:
+        #For each yellow or white colour in a position that is one anticlockwise turn away from being oriented on every corner, orientedCount is increased by 2.
         if colour == 'white' or colour == 'yellow':
             orientedCount = orientedCount + 2
+    #If this orientedCount is not divisible by 3, a corner is twisted, and the user is notified.
     if orientedCount % 3 != 0:
         print('The cube has a twisted corner. Check that you have entered the corners correctly, or else they may be twisted.')
 
+    #The edge twist validation works by a mathematical method, explained in the design.
     orientedCount = 0
     for edge in [[yellowFace[2][1],greenFace[0][1]],[yellowFace[1][2],orangeFace[0][1]],[yellowFace[0][1],blueFace[0][1]],[yellowFace[1][0],redFace[0][1]],[greenFace[1][2],orangeFace[1][0]],[blueFace[1][0],orangeFace[1][2]],[blueFace[1][2],redFace[1][0]],[greenFace[1][0],redFace[1][2]],[whiteFace[0][1],greenFace[2][1]],[whiteFace[1][2],orangeFace[2][1]],[whiteFace[2][1],blueFace[2][1]],[whiteFace[1][0],redFace[2][1]]]:
+        #Every edge is checked for whether it has a yellow or a white in an oriented position. If it does, orientedCount is increased by 1.
         if edge[0] in ['yellow','white']:
             orientedCount = orientedCount + 1
+        #Every edge that does not contain yellow or white is checked for whether it has a blue or a green in an oriented position. If it does, orientedCount is increased by 1.
         if edge[0] in ['blue','green'] and edge[1] in ['red','orange']:
             orientedCount = orientedCount + 1
+    #If orientedCount is not divisible by 2, an edge is twisted, and the user is notified.
     if orientedCount % 2 != 0:
         print('The cube has a twisted edge. Check that you have entered the edges correctly, or else they may be twisted.')
     
@@ -361,29 +430,43 @@ def validation():
 
 def solve():
     global solveMoves
+    #This dictionary contains every possible move and the name of the function it corresponds to.
     moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     #-=-=-=-=-=-=-=-=-=-=-=WHITE CROSS=-=-=-=-=-=-=-=-=-=-=-
-    #First it checks for which pieces have already been solved.
+    #solveMoves is a list that keeps track of what moves have to be done to solve the cube.
     solveMoves = []
+    #First it checks for which pieces have already been solved.
+    #whiteCrossSolved is a list that keeps track of which pieces of the white cross are solved.
     whiteCrossSolved = [False,False,False,False]
+    #A loop is used to make the program continuously search and solve the cross until it is complete.
     while whiteCrossSolved != [True,True,True,True]:
+        #Each white cross piece is solved only if it is in the correct position, and the other colour lines up with the right colour face.
+        #The index 0 keeps track of whether the green side white piece is solved.
         if whiteFace[0][1] == 'white' and greenFace[2][1] == 'green':
             whiteCrossSolved[0] = True
+        #The index 1 keeps track of whether the red side white piece is solved.
         if whiteFace[1][0] == 'white' and redFace[2][1] == 'red':
             whiteCrossSolved[1] = True
+        #The index 2 keeps track of whether the blue side white piece is solved.
         if whiteFace[2][1] == 'white' and blueFace[2][1] == 'blue':
             whiteCrossSolved[2] = True
+        #The index 3 keeps track of whether the orange side white piece is solved.
         if whiteFace[1][2] == 'white' and orangeFace[2][1] == 'orange':
             whiteCrossSolved[3] = True
 
+        #The program now searches through every single possible position where a white edge could be, and performs an algorithm to insert it.
         #Solving the side face bottom slice.
         if greenFace[2][1] == 'white':
+            #possibleMoves is a dictionary which contains different algorithms with colours as keys.
             possibleMoves = {'green':["F'",'D',"R'","D'"],'red':['F','L'],'blue':["F'","D'","R'",'D'],'orange':["F'","R'"]}
+            #Depending on the other colour on the edge piece, a certain algorithm is selected.
             requiredMoves = possibleMoves[whiteFace[0][1]]
+            #This algorithm is then performed and added to the final solve move list.
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
                 moveList[requiredMoves[i]]()
 
+        #The same procedure is used for every position, with different algorithms.
         if redFace[2][1] == 'white':
             possibleMoves = {'green':["L'","F'"],'red':["L'",'D',"F'","D'"],'blue':['L','B'],'orange':["L'","D'","F'",'D']}
             requiredMoves = possibleMoves[whiteFace[1][0]]
@@ -820,16 +903,21 @@ def solve():
             #The result should be that the edge and corner pieces are both in the top layer.
             cornerEdgeReady = True
 
-        #Positioning the corner so that it can be solved:
+        #A corner is positioned to be solved if it is in the top layer.
+        #White is added to the edgeColours list, so that it can be compared to a corner.
         edgeColours.append('white')
+        #For the case when it is in the green-red-yellow corner:
         if compareList(edgeColours,[greenFace[0][0],redFace[0][2],yellowFace[2][0]]) == True:
+            #White has to be removed from edgeColours to find where the corner has to be placed.
             edgeColours.pop(edgeColours.index('white'))
             for i in range (len(edgeFaceList)):
+                #The index of the two non-white colours in the list edgeFaceList is used to work out how many U turns have to be done.
                 if compareList(edgeFaceList[i],edgeColours) == True:
                     for _ in range(i):
                         solveMoves.append('U')
                         U()
                     break
+        #For the case when it is in the blue-red-yellow corner:
         elif compareList(edgeColours,[blueFace[0][2],redFace[0][0],yellowFace[0][0]]) == True:
             edgeColours.pop(edgeColours.index('white'))
             for i in range (len(edgeFaceList)):
@@ -840,6 +928,7 @@ def solve():
                         solveMoves.append('U')
                         U()
                     break
+        #For the case when it is in the blue-orange-yellow corner:
         elif compareList(edgeColours,[blueFace[0][0],orangeFace[0][2],yellowFace[0][2]]) == True:
             edgeColours.pop(edgeColours.index('white'))
             for i in range (len(edgeFaceList)):
@@ -850,6 +939,7 @@ def solve():
                         solveMoves.append('U')
                         U()
                     break
+        #For the case when it is in the green-orange-yellow corner:
         elif compareList(edgeColours,[greenFace[0][2],orangeFace[0][0],yellowFace[2][2]]) == True:
             edgeColours.pop(edgeColours.index('white'))
             for i in range (len(edgeFaceList)):
@@ -861,6 +951,7 @@ def solve():
                         U()
                     break
         else:
+            #If the corner is not in the top layer, nothing has to be done, and white can be removed from edgeColours.
             edgeColours.pop(edgeColours.index('white'))
         
         #Now an algorithm can be performed, from http://algdb.net/puzzle/333/f2l.
