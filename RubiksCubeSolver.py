@@ -1480,6 +1480,7 @@ def solve():
         #Through the use of a for loop and U turns, the state of the yellow face can be cycled into every possible positions.
         #This grants the benefit of not needing to program extra algorithms for each orientation of the yellow face.
         for _ in range(4):
+            #Now an algorithm can be performed, from http://algdb.net/puzzle/333/oll.
             U()
             solveMoves.append('U')
             #OLL 1
@@ -1654,12 +1655,101 @@ def solve():
             elif [greenFace[0][1],blueFace[0][1],yellowFace[0][0],yellowFace[0][2],yellowFace[1][0],yellowFace[1][2],yellowFace[2][0],yellowFace[2][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ["L'", 'R', 'U', "R'", "U'", 'L', "R'", 'F', 'R', "F'"]
             
+            #If OLL is not complete, requiredMoves is either the necessary algorithm or an empty list, so either way, it can be performed.
             if yellowFace != [['yellow','yellow','yellow'],['yellow','yellow','yellow'],['yellow','yellow','yellow']]:
                 for i in range(len(requiredMoves)):
                     solveMoves.append(requiredMoves[i])
                     moveList[requiredMoves[i]]()
+            #If OLL is already complete, the loop does not need to continue.
             else:
                 break
+    
+    #-=-=-=-=-=-=-=-=-=-=-=PLL=-=-=-=-=-=-=-=-=-=-=-
+    requiredMoves = []
+    #This dictionary contains every PLL algorithm, from http://algdb.net/puzzle/333/pll, as well as its reverse.
+    PLLalgorithms = {
+        #Aa
+        ("R'", 'F', "R'", 'B2', 'R', "F'", "R'", 'B2', 'R2'):['R2', 'B2', 'R', 'F', "R'", 'B2', 'R', "F'", 'R'],
+        #Ab
+        ('R2', 'B2', 'R', 'F', "R'", 'B2', 'R', "F'", 'R'):["R'", 'F', "R'", 'B2', 'R', "F'", "R'", 'B2', 'R2'],
+        #E
+        ('L', "U'", 'R', 'D2', "R'", 'U', 'R', "L'", "U'", 'L', 'D2', "L'", 'U', "R'"):['R', "U'", 'L', 'D2', "L'", 'U', 'L', "R'", "U'", 'R', 'D2', "R'", 'U', "L'"],
+        #F
+        ("R'", 'U', 'R', "U'", 'R2', "F'", "U'", 'F', 'U', 'R', 'F', "R'", "F'", 'R2'):['R2', 'F', 'R', "F'", "R'", "U'", "F'", 'U', 'F', 'R2', 'U', "R'", "U'", 'R'],
+        #Ga
+        ('F2', 'R2', 'L2', 'U', 'R2', "U'", 'R2', 'D', 'R2', "D'", 'L2', 'F2'):['F2', 'L2', 'D', 'R2', "D'", 'R2', 'U', 'R2', "U'", 'L2', 'R2', 'F2'],
+        #Gb
+        ("R'", "U'", 'R', 'B2', 'D', "L'", 'U', 'L', "U'", 'L', "D'", 'B2', 'U2'):['U2', 'B2', 'D', "L'", 'U', "L'", "U'", 'L', "D'", 'B2', "R'", 'U', 'R'],
+        #Gc
+        ("U'", "L'", "R'", 'U2', 'L', 'R', 'F', "U'", 'B', 'U2', "F'", 'U', "B'"):['B', "U'", 'F', 'U2', "B'", 'U', "F'", "R'", "L'", 'U2', 'R', 'L', 'U'],
+        #Gd
+        ('R', 'U', "R'", "U'", 'D', 'R2', "U'", 'R', "U'", "R'", 'U', "R'", 'U', 'R2', "D'"):['D', 'R2', "U'", 'R', "U'", 'R', 'U', "R'", 'U', 'R2', "D'", 'U', 'R', "U'", "R'"],
+        #H
+        ('R2', 'U2', 'R', 'U2', 'R2', 'U2', 'R2', 'U2', 'R', 'U2', 'R2'):['R2', 'U2', "R'", 'U2', 'R2', 'U2', 'R2', 'U2', "R'", 'U2', 'R2'],
+        #Ja
+        ("R'", 'U', "L'", 'U2', 'R', "U'", "R'", 'U2', 'R', 'L'):["L'", "R'", 'U2', 'R', 'U', "R'", 'U2', 'L', "U'", 'R'],
+        #Jb
+        ('R', "U'", 'L', 'U2', "R'", 'U', 'R', 'U2', "L'", "R'"):['R', 'L', 'U2', "R'", "U'", 'R', 'U2', "L'", 'U', "R'"],
+        #Na
+        ('L', "U'", 'R', 'U2', "L'", 'U', "R'", 'L', "U'", 'R', 'U2', "L'", 'U', "R'"):['R', "U'", 'L', 'U2', "R'", 'U', "L'", 'R', "U'", 'L', 'U2', "R'", 'U', "L'"],
+        #Nb
+        ("R'", 'U', "L'", 'U2', 'R', "U'", 'L', "R'", 'U', "L'", 'U2', 'R', "U'", 'L'):["L'", 'U', "R'", 'U2', 'L', "U'", 'R', "L'", 'U', "R'", 'U2', 'L', "U'", 'R'],
+        #Ra
+        ('L', 'U2', "L'", 'U2', 'L', "F'", "L'", "U'", 'L', 'U', 'L', 'F', 'L2'):['L2', "F'", "L'", "U'", "L'", 'U', 'L', 'F', "L'", 'U2', 'L', 'U2', "L'"],
+        #Rb
+        ("R'", 'U2', 'R', 'U2', "R'", 'F', 'R', 'U', "R'", "U'", "R'", "F'", 'R2'):['R2', 'F', 'R', 'U', 'R', "U'", "R'", "F'", 'R', 'U2', "R'", 'U2', 'R'],
+        #T
+        ('F2', 'D', 'R2', "U'", 'R2', 'F2', "D'", 'L2', 'U', 'L2', "U'"):['U', 'L2', "U'", 'L2', 'D', 'F2', 'R2', 'U', 'R2', "D'", 'F2'],
+        #Ua
+        ('F2', "U'", 'L', "R'", 'F2', "L'", 'R', "U'", 'F2'):['F2', 'U', "R'", 'L', 'F2', 'R', "L'", 'U', 'F2'],
+        #Ub
+        ('F2', 'U', 'L', "R'", 'F2', "L'", 'R', 'U', 'F2'):['F2', "U'", "R'", 'L', 'F2', 'R', "L'", "U'", 'F2'],
+        #V
+        ('R2', "U'", 'B2', 'U', 'B2', 'R', "D'", 'R', 'D', "R'", 'U', 'R', "U'", 'R'):["R'", 'U', "R'", "U'", 'R', "D'", "R'", 'D', "R'", 'B2', "U'", 'B2', 'U', 'R2'],
+        #Y
+        ('F', 'U', "F'", 'R2', 'F', "U'", "F'", "U'", 'R2', 'U', 'R2', 'U', 'R2'):['R2', "U'", 'R2', "U'", 'R2', 'U', 'F', 'U', "F'", 'R2', 'F', "U'", "F'"],
+        #Z
+        ("F'", "L'", "U'", 'L', 'U', 'F', "R'", "U'", 'F', "R'", "F'", 'R', 'U', 'R'):["R'", "U'", "R'", 'F', 'R', "F'", 'U', 'R', "F'", "U'", "L'", 'U', 'L', 'F']
+    }
+    PLLsolved = False
+    #If PLL is complete, an algorithm does not need to be performed.
+    if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
+        #By cycling through every algorithm and undoing it if it's wrong, and then repeating from every orientation of the U face, the correct algorithm will eventually be found.
+        PLLalgorithmsList = getList(PLLalgorithms)
+        for i in range(4):
+            if PLLsolved == False:
+                for algorithm in PLLalgorithmsList:
+                    algorithmReverse = PLLalgorithms[algorithm]
+                    for i in range(len(algorithm)):
+                        moveList[algorithm[i]]()
+                    if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
+                        for i in range(len(algorithmReverse)):
+                            moveList[algorithmReverse[i]]()
+                    else:
+                        for i in range(len(algorithm)):
+                            solveMoves.append(algorithm[i])
+                        PLLsolved = True
+                        break
+            U()
+            solveMoves.append('U')
+    
+    #Finally, turning the U face to be oriented correctly.
+    if greenFace[0][0] == 'red':
+        U()
+        solveMoves.append('U')
+    elif greenFace[0][0] == 'blue':
+        U2()
+        solveMoves.append('U2')
+    elif greenFace[0][0] == 'orange':
+        UP()
+        solveMoves.append("U'")
+
+    #The final part of unchecked validation is permutation parity.
+    #If any unsolvable cube makes it this far, the permutation parity must be incorrect.
+    parityValid = True
+    if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
+        print('The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.')
+        parityValid = False
 
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
     tempSolveMoves = []
@@ -1715,9 +1805,12 @@ def solve():
             #The first move cannot be checked.
             tempSolveMoves.append(solveMoves[i])
     solveMoves = [i[:] for i in tempSolveMoves]
-    print(" ".join(solveMoves))
+    if parityValid == True:
+        print(" ".join(solveMoves))
 
 def meanMoves():
+    #This function takes an integer input for a number of solves that should be performed, and then does that many random solves, while counting how many moves each solve took.
+    #At the end, it outputs the mean number of moves required for every solve.
     lengths = []
     for _ in range (int(input('How many solves would you like to test? '))):
         scrambleGen()
