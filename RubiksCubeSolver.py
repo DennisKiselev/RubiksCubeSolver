@@ -1,14 +1,6 @@
 import random
 import statistics
 
-#Makes a list of the keys in a dictionary
-#Takes a disctionary as an input, outputs a list
-def getList(dict):
-    list = []
-    for key in dict.keys():
-        list.append(key)
-    return list
-
 #Compares whether one list contains variables that are all contained in another list, but not necessarily in the same order.
 #Takes two lists as an input, outputs a boolean variable.
 def compareList(list1,list2):
@@ -45,11 +37,11 @@ def scrambleGen():
     scramble = []
     for i in range(20):
         #A random move is selected from the list of the keys of the moveList dictionary.
-        current = random.choice(getList(moveList))
+        current = random.choice(list(moveList))
         try:
             #Whenever a move has the same base as either of the two before it, a new one is generated until a valid one is found.
             while current[0] == scramble[i-1][0] or current[0] == scramble[i-2][0]:
-                current = random.choice(getList(moveList))
+                current = random.choice(list(moveList))
         except:
             #The except is necessary for when the first move is checked, as there is no move before it to compare it to.
             pass
@@ -1806,7 +1798,7 @@ def solve():
     #If PLL is complete, an algorithm does not need to be performed.
     if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
         #By cycling through every algorithm and undoing it if it's wrong, and then repeating from every orientation of the U face, the correct algorithm will eventually be found.
-        PLLalgorithmsList = getList(PLLalgorithms)
+        PLLalgorithmsList = list(PLLalgorithms)
         for i in range(4):
             if PLLsolved == False:
                 for algorithm in PLLalgorithmsList:
@@ -1910,6 +1902,7 @@ def meanMoves():
     print(statistics.mean(lengths))
 
 def main():
-    meanMoves()
+    scrambleGen()
+    solve()
 
 main()
