@@ -16,12 +16,12 @@ def cubeReset():
 
 #Outputs the current state of the cube as text
 def printCube():
-    print(greenFace)
-    print(blueFace)
-    print(redFace)
-    print(orangeFace)
-    print(whiteFace)
-    print(yellowFace)
+    print('greenFace =',greenFace)
+    print('blueFace =',blueFace)
+    print('redFace =',redFace)
+    print('orangeFace =',orangeFace)
+    print('whiteFace =',whiteFace)
+    print('yellowFace =',yellowFace)
 
 #Generates a random 20 move length scramble.
 def scrambleGen():
@@ -1904,6 +1904,8 @@ def meanMoves():
 
 def main():
     scrambleGen()
+    printCube()
     solve()
+    printCube()
 
 main()
