@@ -1,16 +1,9 @@
-import random
-import statistics
-
-#Compares whether one list contains variables that are all contained in another list, but not necessarily in the same order.
-#Takes two lists as an input, outputs a boolean variable.
-def compareList(list1,list2):
-    for element in list1:
-        if not element in list2:
-            return False
-    return True
+import random #For scramble generation
+import statistics #For meanMoves function
 
 #Resets the cube to its default state.
 def cubeReset():
+    #The cube needs to be modified throughout all the functions, so it must be global.
     global greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace
     #The cube is represented in six 3x3 arrays which represents each face.
     #The default state is a single solid colour.
@@ -33,7 +26,7 @@ def printCube():
 #Generates a random 20 move length scramble.
 def scrambleGen():
     #This dictionary contains every possible move and the name of the function it corresponds to.
-    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     scramble = []
     for i in range(20):
         #A random move is selected from the list of the keys of the moveList dictionary.
@@ -58,7 +51,7 @@ def scrambleGen():
 #Receives a custom scramble input and performs it.
 def scrambleInput():
     #This dictionary contains every possible move and the name of the function it corresponds to.
-    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     scramble = input('Input your custom scramble: ')
     #The input is split into a list to be performed.
     scramble = scramble.split()
@@ -310,6 +303,14 @@ def colourConversion():
         cubeState[5] = [[tempCubeState[1][2][2],tempCubeState[1][2][1],tempCubeState[1][2][0]],[tempCubeState[1][1][2],tempCubeState[1][1][1],tempCubeState[1][1][0]],[tempCubeState[1][0][2],tempCubeState[1][0][1],tempCubeState[1][0][0]]]
     print(cubeState)
 
+#Compares whether one list contains variables that are all contained in another list, but not necessarily in the same order.
+#Takes two lists as an input, outputs a boolean variable.
+def compareList(list1,list2):
+    for element in list1:
+        if not element in list2:
+            return False
+    return True
+
 #Validates the cube for everything other than permutation parity.
 def validation():
     cubeState = []
@@ -423,7 +424,7 @@ def validation():
 def solve():
     global solveMoves
     #This dictionary contains every possible move and the name of the function it corresponds to.
-    moveList = {"U":U,"D":D,"F":F,"B":B,"R":R,"L":L,"U2":U2,"D2":D2,"F2":F2,"B2":B2,"R2":R2,"L2":L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     #-=-=-=-=-=-=-=-=-=-=-=WHITE CROSS=-=-=-=-=-=-=-=-=-=-=-
     #solveMoves is a list that keeps track of what moves have to be done to solve the cube.
     solveMoves = []
