@@ -40,13 +40,16 @@ def scrambleGen():
             pass
         #The move is then added to the scramble.
         scramble.append(current)
-    #The complete scramble is outputted to the user.
-    print(" ".join(scramble))
     #The cube needs to be in its default state before being scrambled.
     cubeReset()
     #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
     for move in scramble:
         moveList[move]()
+    #The complete scramble is outputted to the user.
+    scramble = (" ".join(scramble))
+    print(scramble)
+    #Returns the scramble.
+    return scramble
 
 #Receives a custom scramble input and performs it.
 def scrambleInput():
@@ -60,6 +63,22 @@ def scrambleInput():
     #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
     for move in scramble:
         moveList[move]()
+
+#Takes a scramble and returns the state of the cube, needed for theh GUI.
+def autoScrambleInput(scramble):
+    #This dictionary contains every possible move and the name of the function it corresponds to.
+    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+    #The input is split into a list to be performed.
+    scramble = scramble.split()
+    #The cube needs to be in its default state before being scrambled.
+    cubeReset()
+    #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
+    for move in scramble:
+        moveList[move]()
+    #Returns state of the cube.
+    cubeState = []
+    cubeState.extend([greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace])
+    return cubeState
 
 #Performs a U move.
 def U():
@@ -1903,9 +1922,6 @@ def meanMoves():
     print(statistics.mean(lengths))
 
 def main():
-    scrambleGen()
-    printCube()
-    solve()
-    printCube()
+    cubeReset()
 
 main()
