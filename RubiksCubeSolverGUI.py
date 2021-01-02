@@ -117,48 +117,75 @@ def mainGUI():
     #Resets cubeState.
     cubeState = cubeReset()
 
+    #Window continues to be displayed and repeatedly updated while the condition is true.
     going = True
     while going == True:
+        #Every event in the event list is cycled through and functions are carried out depending on the event.
         for event in pygame.event.get():
+            #If the user presses quit, the program ends.
             if event.type == QUIT:
                 going = False
+            #If the user presses escape, the program ends.
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 going = False
+            #If the user presses space, the cube is scrambled.
             elif event.type == KEYDOWN and event.key == K_SPACE:
+                #Scramble is generated and made into a list.
                 scrambleMoves = scrambleGen()
+                #Cube is updated to contain the scramble.
                 cubeState = moveInput(scrambleMoves)
+                #Another cube is being drawn, so the screen has to be reset by redrawing the background.
                 screen.blit(background,(0,0))
+                #Every facelet is updated.
                 for facelets in faceletList:
                     facelets.update(cubeState)
+            #If the user clicks, the facelet that is clicked on cycles to a new colour.
             elif event.type == MOUSEBUTTONUP:
+                #Every facelet is checked for whether it has been clicked on and the correct one is updated.
                 for facelets in faceletList:
                     cubeState = facelets.clickCheck(cubeState)
+            #If the user presses S, the cube is solved.
             elif event.type == KEYDOWN and event.key == K_s:
+                #This dictionary contains every possible move and the name of the function it corresponds to.
                 moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+                #List of moves is generated.
                 solveMoves = solve()
+                #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
                 cubeState = moveInput(moveReversal(solveMoves))
+                #Every move in the solve is shown separately with a delay.
                 for move in solveMoves:
+                    #The current move's function is called to change the cube's state.
                     moveList[move]()
+                    #The facelets are updated to show how they look after the move is performed.
                     for facelets in faceletList:
                         facelets.update(cubeState)
+                    #The grid is redrawn onto the cube.
                     pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                    #The display is updated.
                     pygame.display.flip()
+                    #Every move has a slight delay to show each move separately.
                     time.sleep(0.1)
+            #If the user presses X, the cube is turned on the x-axis.
             elif event.type == KEYDOWN and event.key == K_x:
                 x()
                 for facelets in faceletList:
                     facelets.update(cubeState)
+            #If the user presses Y, the cube is turned on the y-axis.
             elif event.type == KEYDOWN and event.key == K_y:
                 y()
                 for facelets in faceletList:
                     facelets.update(cubeState)
+            #If the user presses Z, the cube is turned on the z-axis.
             elif event.type == KEYDOWN and event.key == K_z:
                 z()
                 for facelets in faceletList:
                     facelets.update(cubeState)
-            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)
+            #The grid is redrawn onto the cube.
+            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+            #The display is updated at the end of every loop.
             pygame.display.flip()
 
 
+#If this is the main file being run, the main function is run.
 if __name__ == '__main__':
     mainGUI()
