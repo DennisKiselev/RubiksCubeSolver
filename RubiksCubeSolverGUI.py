@@ -57,6 +57,9 @@ class Facelet():
     
 
 def mainGUI():
+    #Pygame is initialised.
+    pygame.init()
+
     #Dictionary containing all the possible colours and their corresponding RGB values.
     colour_dict = {"green":(0,255,0),"blue":(0,0,255),"red":(255,0,0),"orange":(255,128,0),"white":(255,255,255),"yellow":(255,255,0)}
 
@@ -148,23 +151,44 @@ def mainGUI():
             elif event.type == KEYDOWN and event.key == K_s:
                 #This dictionary contains every possible move and the name of the function it corresponds to.
                 moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
-                #List of moves is generated.
-                solveMoves = solve()
-                #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
-                cubeState = moveInput(moveReversal(solveMoves))
-                #Every move in the solve is shown separately with a delay.
-                for move in solveMoves:
-                    #The current move's function is called to change the cube's state.
-                    moveList[move]()
-                    #The facelets are updated to show how they look after the move is performed.
-                    for facelets in faceletList:
-                        facelets.update(cubeState)
-                    #The grid is redrawn onto the cube.
-                    pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
-                    #The display is updated.
-                    pygame.display.flip()
-                    #Every move has a slight delay to show each move separately.
-                    time.sleep(0.1)
+                #The cube is validated for whether it is possible to solve.
+                #If the validation returns a boolean and a string, they are both stored.
+                try:
+                    valid, message = validation()
+                #If the validation returns only a boolean, it is stored.
+                except:
+                    valid = validation()
+                #If the cube is valid, it can be solved.
+                if valid == True:
+                    #List of moves is generated.
+                    solveMoves = solve()
+                    #If solveMoves is a string rather than a list then it has returned a message and permutation parity is invalid.
+                    if isinstance(solveMoves, str) != True:
+                        #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
+                        cubeState = moveInput(moveReversal(solveMoves))
+                        #Every move in the solve is shown separately with a delay.
+                        for move in solveMoves:
+                            #The current move's function is called to change the cube's state.
+                            moveList[move]()
+                            #The facelets are updated to show how they look after the move is performed.
+                            for facelets in faceletList:
+                                facelets.update(cubeState)
+                            #The grid is redrawn onto the cube.
+                            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                            #The display is updated.
+                            pygame.display.flip()
+                            #Every move has a slight delay to show each move separately.
+                            time.sleep(0.1)
+                    #If permutation parity is invalid, the cube cannot be solved, and solveMoves is a message that needs outputting.
+                    else:
+                        valid = False
+                        message = solveMoves
+                #If the cube is not solvable, a message is displayed letting the user know what is wrong.
+                if valid == False:
+                    font = pygame.font.Font(None, 36)
+                    text = font.render(message, 1, (0,0,0), (128,128,128))
+                    screen.blit(text,(0,0))
+                    #REMOVE THE LAST MESSAGE!!!!
             #If the user presses X, the cube is turned on the x-axis.
             elif event.type == KEYDOWN and event.key == K_x:
                 x()

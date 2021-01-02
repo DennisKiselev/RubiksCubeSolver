@@ -96,6 +96,7 @@ def moveReversal(oldAlg):
         #If there is nothing in the second position, it must be a base move, and is reversed with a prime move.
         except:
             newAlg.append(tempOldAlg[len(tempOldAlg) - 1][0]+"'")
+        #The move has been reversed so it can be removed so that the next one can be reversed.
         tempOldAlg.pop()
     #Reversed algorithm is returned as a string.
     newAlg = (" ".join(newAlg))
@@ -445,17 +446,17 @@ def validation():
             yellowCount = yellowCount + colour.count("yellow")
     #If the number times a certain colour appears is not 9, the user is told which colour it is, how many there are, and how many there should be.
     if greenCount != 9:
-        print("The cube is invalid. The number of green coloured pieces is "+str(greenCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of green coloured pieces is "+str(greenCount)+", but it should be 9."
     if blueCount != 9:
-        print("The cube is invalid. The number of blue coloured pieces is "+str(blueCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of blue coloured pieces is "+str(blueCount)+", but it should be 9."
     if redCount != 9:
-        print("The cube is invalid. The number of red coloured pieces is "+str(redCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of red coloured pieces is "+str(redCount)+", but it should be 9."
     if orangeCount != 9:
-        print("The cube is invalid. The number of orange coloured pieces is "+str(orangeCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of orange coloured pieces is "+str(orangeCount)+", but it should be 9."
     if whiteCount != 9:
-        print("The cube is invalid. The number of white coloured pieces is "+str(whiteCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of white coloured pieces is "+str(whiteCount)+", but it should be 9."
     if yellowCount != 9:
-        print("The cube is invalid. The number of yellow coloured pieces is "+str(yellowCount)+", but it should be 9.")
+        return False, "The cube is invalid. The number of yellow coloured pieces is "+str(yellowCount)+", but it should be 9."
     
     #The cube needs to be checked for whether it has exactly one of each possible corner type.
     #cornerList is a 2D tuple which contains lists of every possible combination of colours on a corner.
@@ -473,7 +474,7 @@ def validation():
     for i in range (8):
         #After validating, if False is anywhere in cornerCheck, then that corner must not have been found, so the user is notified which corner is missing.
         if cornerCheck[i] == False:
-            print("The cube is missing a corner with the colours "+cornerList[i][0]+", "+cornerList[i][1]+", and "+cornerList[i][2]+".")
+            return False, "The cube is missing a corner with the colours "+cornerList[i][0]+", "+cornerList[i][1]+", and "+cornerList[i][2]+"."
 
     #Edge validation is done in exactly the same manner as corner validation, with a longer list.
     edgeList = (['yellow','green'],['yellow','orange'],['yellow','blue'],['yellow','red'],['green','orange'],['orange','blue'],['blue','red'],['red','green'],['white','green'],['white','orange'],['white','blue'],['white','red'])
@@ -485,7 +486,7 @@ def validation():
                 edgeCheck[i] = True
     for i in range (12):
         if edgeCheck[i] == False:
-            print("The cube is missing an edge with the colours "+cornerList[i][0]+" and "+cornerList[i][1]+".")
+            return False, "The cube is missing an edge with the colours "+cornerList[i][0]+" and "+cornerList[i][1]+"."
     
     #The center pieces has to be validated for whether the way that they are orientated relative to one another is possible.
     #This dictionary contains every single possible way that the cube could be oriented, and how the rest of the center pieces would have to be positioned.
@@ -495,11 +496,11 @@ def validation():
     try:
         #If the rest of the center pieces are not as defined by the dictionary, then the the cube is invalid and the user is notified.
         if [blueFace[1][1],whiteFace[1][1],redFace[1][1]] != orientationList[currentOrientation]:
-            print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
+            return False, 'The cube is invalid. Please check whether you have entered the centre pieces correctly.'
     except:
         #This try-except is required in the case that the input does not have a center orientation that works as a key to the dictionary.
         #If this is the case, then the cube is invalid and the user is notified.
-        print('The cube is invalid. Please check whether you have entered the centre pieces correctly.')
+        return False, 'The cube is invalid. Please check whether you have entered the centre pieces correctly.'
 
     #The corner twist validation works by a mathematical method, explained in the design.
     orientedCount = 0
@@ -513,7 +514,7 @@ def validation():
             orientedCount = orientedCount + 2
     #If this orientedCount is not divisible by 3, a corner is twisted, and the user is notified.
     if orientedCount % 3 != 0:
-        print('The cube has a twisted corner. Check that you have entered the corners correctly, or else they may be twisted.')
+        return False, 'The cube has a twisted corner. Check that you have entered the corners correctly, or else they may be twisted.'
 
     #The edge twist validation works by a mathematical method, explained in the design.
     orientedCount = 0
@@ -526,9 +527,11 @@ def validation():
             orientedCount = orientedCount + 1
     #If orientedCount is not divisible by 2, an edge is twisted, and the user is notified.
     if orientedCount % 2 != 0:
-        print('The cube has a twisted edge. Check that you have entered the edges correctly, or else they may be twisted.')
+        return False, 'The cube has a twisted edge. Check that you have entered the edges correctly, or else they may be twisted.'
     
     #Permutation parity is checked later in the solve, it's just much easier to program that way.
+    #If all validation is passed, True is returned instead of False.
+    return True
 
 def solve():
     #This dictionary contains every possible move and the name of the function it corresponds to.
@@ -1951,7 +1954,7 @@ def solve():
     #If any unsolvable cube makes it this far, the permutation parity must be incorrect.
     parityValid = True
     if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
-        print('The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.')
+        return 'The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.'
         parityValid = False
 
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
