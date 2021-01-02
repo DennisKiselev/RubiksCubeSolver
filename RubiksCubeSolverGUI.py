@@ -30,16 +30,18 @@ class Facelet():
 
     #Updates the facelet to its new colour.
     def update(self,currentState):
-        colour_dict = {"green":[0,255,0],"blue":[0,0,255],"red":[255,0,0],"orange":[255,128,0],"white":[255,255,255],"yellow":[255,255,0]}
+        colour_dict = {"green":(0,255,0),"blue":(0,0,255),"red":(255,0,0),"orange":(255,128,0),"white":(255,255,255),"yellow":(255,255,0)}
         self.colour = colour_dict[currentState[self.colourIndex[0]][self.colourIndex[1]][self.colourIndex[2]]]
         pygame.draw.polygon(self.surface,self.colour,self.points)
 
     #Checks if the facelet has been clicked on, and changes its colour.
-    def clickCheck(self):
+    def clickCheck(self,currentState):
+        #This dictionary is used to convert RGB values to words so that the solve function can make sense of it.
+        reverse_colour_dict = {(0,255,0):"green",(0,0,255):"blue",(255,0,0):"red",(255,128,0):"orange",(255,255,255):"white",(255,255,0):"yellow"}
         #If the facelet exists (mask = 1) at the position of the mouse cursor, it has been clicked on.
         if self.mask.get_at(pygame.mouse.get_pos()) == 1:
             #List of the possible colours in RGB form.
-            colourList = [[0,255,0],[0,0,255],[255,0,0],[255,128,0],[255,255,255],[255,255,0]]
+            colourList = [(0,255,0),(0,0,255),(255,0,0),(255,128,0),(255,255,255),(255,255,0)]
             #The colour of the facelet is changed to the next colour in the list.
             try:
                 self.colour = colourList[colourList.index(self.colour) + 1]
@@ -48,11 +50,15 @@ class Facelet():
                 self.colour = colourList[colourList.index(self.colour) - 5]
             #Facelet is redrawn with its new colour.
             pygame.draw.polygon(self.surface,self.colour,self.points)
-
+            #The cube's state is updated to hold the new information.
+            currentState[self.colourIndex[0]][self.colourIndex[1]][self.colourIndex[2]] = reverse_colour_dict[self.colour]
+        #Returns the cube's state to update it.
+        return currentState
+    
 
 def mainGUI():
     #Dictionary containing all the possible colours and their corresponding RGB values.
-    colour_dict = {"green":[0,255,0],"blue":[0,0,255],"red":[255,0,0],"orange":[255,128,0],"white":[255,255,255],"yellow":[255,255,0]}
+    colour_dict = {"green":(0,255,0),"blue":(0,0,255),"red":(255,0,0),"orange":(255,128,0),"white":(255,255,255),"yellow":(255,255,0)}
 
     #Creates and displays a window
     screen = pygame.display.set_mode((1280, 720))
@@ -108,6 +114,9 @@ def mainGUI():
     #Updates the display.
     pygame.display.flip()
 
+    #Resets cubeState.
+    cubeState = cubeReset()
+
     going = True
     while going == True:
         for event in pygame.event.get():
@@ -123,11 +132,11 @@ def mainGUI():
                     facelets.update(cubeState)
             elif event.type == MOUSEBUTTONUP:
                 for facelets in faceletList:
-                    facelets.clickCheck()
+                    cubeState = facelets.clickCheck(cubeState)
             elif event.type == KEYDOWN and event.key == K_s:
                 moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
                 solveMoves = solve()
-                cubeState = moveInput(scrambleMoves)
+                cubeState = moveInput(moveReversal(solveMoves))
                 for move in solveMoves:
                     moveList[move]()
                     for facelets in faceletList:

@@ -13,6 +13,10 @@ def cubeReset():
     orangeFace = [["orange","orange","orange"],["orange","orange","orange"],["orange","orange","orange"]]
     whiteFace = [["white","white","white"],["white","white","white"],["white","white","white"]]
     yellowFace = [["yellow","yellow","yellow"],["yellow","yellow","yellow"],["yellow","yellow","yellow"]]
+    #Returns default state of the cube, for GUI startup.
+    cubeState = []
+    cubeState.extend([greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace])
+    return cubeState
 
 #Outputs the current state of the cube as text
 def printCube():
@@ -77,6 +81,25 @@ def moveInput(scramble):
     cubeState = []
     cubeState.extend([greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace])
     return cubeState
+
+#Takes a list of moves and returns what moves are needed to reverse it.
+def moveReversal(oldAlg):
+    tempOldAlg = oldAlg[:]
+    newAlg = []
+    while len(tempOldAlg) > 0:
+        #Depending on the second character in the string, different moves are needed to reverse them.
+        try:
+            if tempOldAlg[len(tempOldAlg) - 1][1] == '2':
+                newAlg.append(tempOldAlg[len(tempOldAlg) - 1])
+            elif tempOldAlg[len(tempOldAlg) - 1][1] == "'":
+                newAlg.append(tempOldAlg[len(tempOldAlg) - 1][0])
+        #If there is nothing in the second position, it must be a base move, and is reversed with a prime move.
+        except:
+            newAlg.append(tempOldAlg[len(tempOldAlg) - 1][0]+"'")
+        tempOldAlg.pop()
+    #Reversed algorithm is returned as a string.
+    newAlg = (" ".join(newAlg))
+    return newAlg
 
 #Performs a U move.
 def U():
@@ -713,6 +736,17 @@ def solve():
     #-=-=-=-=-=-=-=-=-=-=-=F2L=-=-=-=-=-=-=-=-=-=-=-
     #First it checks for which pairs have already been solved.
     F2Lsolved = [False,False,False,False]
+    if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
+            F2Lsolved[0] = True
+        #Check if blue-red-white pair is solved.
+    if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
+        F2Lsolved[1] = True
+    #Check if blue-orange-white pair is solved.
+    if blueFace[1][0] == 'blue' and blueFace[2][0] == 'blue' and orangeFace[1][2] == 'orange' and orangeFace[2][2] == 'orange' and whiteFace[2][2] == 'white':
+        F2Lsolved[2] = True
+    #Check if green-orange-white pair is solved.
+    if orangeFace[1][0] == 'orange' and orangeFace[2][0] == 'orange' and greenFace[1][2] == 'green' and greenFace[2][2] == 'green' and whiteFace[0][2] == 'white':
+        F2Lsolved[3] = True
     while F2Lsolved != [True,True,True,True]:
         requiredMoves = []
         #Check if green-red-white pair is solved.
