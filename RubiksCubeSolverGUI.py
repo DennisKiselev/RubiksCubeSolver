@@ -113,6 +113,8 @@ def mainGUI():
         for event in pygame.event.get():
             if event.type == QUIT:
                 going = False
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                going = False
             elif event.type == KEYDOWN and event.key == K_SPACE:
                 scrambleMoves = scrambleGen()
                 cubeState = moveInput(scrambleMoves)
@@ -133,6 +135,18 @@ def mainGUI():
                     pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
                     pygame.display.flip()
                     time.sleep(0.1)
+            elif event.type == KEYDOWN and event.key == K_x:
+                x()
+                for facelets in faceletList:
+                    facelets.update(cubeState)
+            elif event.type == KEYDOWN and event.key == K_y:
+                y()
+                for facelets in faceletList:
+                    facelets.update(cubeState)
+            elif event.type == KEYDOWN and event.key == K_z:
+                z()
+                for facelets in faceletList:
+                    facelets.update(cubeState)
             pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)
             pygame.display.flip()
 

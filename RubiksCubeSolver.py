@@ -45,10 +45,8 @@ def scrambleGen():
     #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
     for move in scramble:
         moveList[move]()
-    #The complete scramble is outputted to the user.
+    #The complete scramble is returned.
     scramble = (" ".join(scramble))
-    print(scramble)
-    #Returns the scramble.
     return scramble
 
 #Receives a custom scramble input and performs it.
@@ -64,15 +62,15 @@ def scrambleInput():
     for move in scramble:
         moveList[move]()
 
-#Takes a scramble and returns the state of the cube, needed for theh GUI.
-def autoScrambleInput(scramble):
+#Takes a list of moves and returns the state of the cube.
+def moveInput(scramble):
     #This dictionary contains every possible move and the name of the function it corresponds to.
     moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     #The input is split into a list to be performed.
     scramble = scramble.split()
-    #The cube needs to be in its default state before being scrambled.
+    #The cube needs to be in its default state before moves are performed.
     cubeReset()
-    #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
+    #The dictionary is used to cycle through the moves and perform the function corresponding to each move.
     for move in scramble:
         moveList[move]()
     #Returns state of the cube.
@@ -301,6 +299,75 @@ def L2():
 def LP():
     [L() for i in range(3)]
 
+#Rotates the cube through the axis going through the front and back faces.
+def x():
+    #This can be broken down into an F' and B move, and a turn of the slice in between.
+    FP()
+    B()
+    tempRedFace = [i[:] for i in redFace]
+    tempOrangeFace = [i[:] for i in orangeFace]
+    tempWhiteFace = [i[:] for i in whiteFace]
+    tempYellowFace = [i[:] for i in yellowFace]
+    #This list of transformations replicates turning that slice.
+    redFace[0][1] = tempYellowFace[1][2]
+    redFace[1][1] = tempYellowFace[1][1]
+    redFace[2][1] = tempYellowFace[1][0]
+    whiteFace[1][0] = tempRedFace[0][1]
+    whiteFace[1][1] = tempRedFace[1][1]
+    whiteFace[1][2] = tempRedFace[2][1]
+    orangeFace[2][1] = tempWhiteFace[1][0]
+    orangeFace[1][1] = tempWhiteFace[1][1]
+    orangeFace[0][1] = tempWhiteFace[1][2]
+    yellowFace[1][2] = tempOrangeFace[2][1]
+    yellowFace[1][1] = tempOrangeFace[1][1]
+    yellowFace[1][0] = tempOrangeFace[0][1]
+
+#Rotates the cube through the axis going through the top and bottom faces.
+def y():
+    #This can be broken down into an U and D' move, and a turn of the slice in between.
+    U()
+    DP()
+    tempGreenFace = [i[:] for i in greenFace]
+    tempBlueFace = [i[:] for i in blueFace]
+    tempRedFace = [i[:] for i in redFace]
+    tempOrangeFace = [i[:] for i in orangeFace]
+    #This list of transformations replicates turning that slice.
+    redFace[1][0] = tempGreenFace[1][0]
+    redFace[1][1] = tempGreenFace[1][1]
+    redFace[1][2] = tempGreenFace[1][2]
+    blueFace[1][0] = tempRedFace[1][0]
+    blueFace[1][1] = tempRedFace[1][1]
+    blueFace[1][2] = tempRedFace[1][2]
+    orangeFace[1][0] = tempBlueFace[1][0]
+    orangeFace[1][1] = tempBlueFace[1][1]
+    orangeFace[1][2] = tempBlueFace[1][2]
+    greenFace[1][0] = tempOrangeFace[1][0]
+    greenFace[1][1] = tempOrangeFace[1][1]
+    greenFace[1][2] = tempOrangeFace[1][2]
+
+#Rotates the cube through the axis going through the top and bottom faces.
+def z():
+    #This can be broken down into an R and L' move, and a turn of the slice in between.
+    R()
+    LP()
+    tempGreenFace = [i[:] for i in greenFace]
+    tempBlueFace = [i[:] for i in blueFace]
+    tempWhiteFace = [i[:] for i in whiteFace]
+    tempYellowFace = [i[:] for i in yellowFace]
+    #This list of transformations replicates turning that slice.
+    yellowFace[0][1] = tempGreenFace[0][1]
+    yellowFace[1][1] = tempGreenFace[1][1]
+    yellowFace[2][1] = tempGreenFace[2][1]
+    blueFace[2][1] = tempYellowFace[0][1]
+    blueFace[1][1] = tempYellowFace[1][1]
+    blueFace[0][1] = tempYellowFace[2][1]
+    whiteFace[0][1] = tempBlueFace[2][1]
+    whiteFace[1][1] = tempBlueFace[1][1]
+    whiteFace[2][1] = tempBlueFace[0][1]
+    greenFace[0][1] = tempWhiteFace[0][1]
+    greenFace[1][1] = tempWhiteFace[1][1]
+    greenFace[2][1] = tempWhiteFace[2][1]
+
 def colourConversion():
     colourChoice = input("Enter the colour for the cross that you wish to construct: ")
     cubeState = []
@@ -441,7 +508,6 @@ def validation():
     #Permutation parity is checked later in the solve, it's just much easier to program that way.
 
 def solve():
-    global solveMoves
     #This dictionary contains every possible move and the name of the function it corresponds to.
     moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     #-=-=-=-=-=-=-=-=-=-=-=WHITE CROSS=-=-=-=-=-=-=-=-=-=-=-
@@ -1908,8 +1974,9 @@ def solve():
             #The first move cannot be checked.
             tempSolveMoves.append(solveMoves[i])
     solveMoves = [i[:] for i in tempSolveMoves]
+    #If permutation parity is valid, solveMoves is valid and can be returned.
     if parityValid == True:
-        print(" ".join(solveMoves))
+        return solveMoves
 
 def meanMoves():
     #This function takes an integer input for a number of solves that should be performed, and then does that many random solves, while counting how many moves each solve took.
@@ -1917,8 +1984,7 @@ def meanMoves():
     lengths = []
     for _ in range (int(input('How many solves would you like to test? '))):
         scrambleGen()
-        solve()
-        lengths.append(len(solveMoves))
+        lengths.append(len(solve()))
     print(statistics.mean(lengths))
 
 def main():
