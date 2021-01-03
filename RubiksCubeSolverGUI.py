@@ -135,6 +135,8 @@ def mainGUI():
             elif event.type == KEYDOWN and event.key == K_SPACE:
                 #Scramble is generated and made into a list.
                 scrambleMoves = scrambleGen()
+                #The cube needs to be in its default state before the scramble is performed.
+                cubeReset()
                 #Cube is updated to contain the scramble.
                 cubeState = moveInput(scrambleMoves)
                 #Another cube is being drawn, so the screen has to be reset by redrawing the background.
@@ -161,9 +163,9 @@ def mainGUI():
                 #If the cube is valid, it can be solved.
                 if valid == True:
                     #List of moves is generated.
-                    solveMoves = solve()
-                    #If solveMoves is a string rather than a list then it has returned a message and permutation parity is invalid.
-                    if isinstance(solveMoves, str) != True:
+                    solveMoves, parityValid = solve()
+                    #If  permutation parity is also valid, the cube can be solved.
+                    if parityValid == True:
                         #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
                         cubeState = moveInput(moveReversal(solveMoves))
                         #Every move in the solve is shown separately with a delay.
@@ -179,10 +181,14 @@ def mainGUI():
                             pygame.display.flip()
                             #Every move has a slight delay to show each move separately.
                             time.sleep(0.1)
-                    #If permutation parity is invalid, the cube cannot be solved, and solveMoves is a message that needs outputting.
+                    #If permutation parity is invalid, the cube cannot be solved.
                     else:
+                        #Cube is changed back to what it was before the attempted solve.
+                        cubeState = moveInput(moveReversal(solveMoves))
+                        for facelets in faceletList:
+                            facelets.update(cubeState)
                         valid = False
-                        message = solveMoves
+                        message = 'The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.'
                 #If the cube is not solvable, a message is displayed letting the user know what is wrong.
                 if valid == False:
                     font = pygame.font.Font(None, 36)

@@ -72,8 +72,6 @@ def moveInput(scramble):
     moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
     #The input is split into a list to be performed.
     scramble = scramble.split()
-    #The cube needs to be in its default state before moves are performed.
-    cubeReset()
     #The dictionary is used to cycle through the moves and perform the function corresponding to each move.
     for move in scramble:
         moveList[move]()
@@ -740,8 +738,8 @@ def solve():
     #First it checks for which pairs have already been solved.
     F2Lsolved = [False,False,False,False]
     if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
-            F2Lsolved[0] = True
-        #Check if blue-red-white pair is solved.
+        F2Lsolved[0] = True
+    #Check if blue-red-white pair is solved.
     if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
         F2Lsolved[1] = True
     #Check if blue-orange-white pair is solved.
@@ -1954,7 +1952,6 @@ def solve():
     #If any unsolvable cube makes it this far, the permutation parity must be incorrect.
     parityValid = True
     if compareList([greenFace[0],redFace[0],blueFace[0],orangeFace[0]],[['green','green','green'],['red','red','red'],['blue','blue','blue'],['orange','orange','orange']]) == False:
-        return 'The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.'
         parityValid = False
 
     #Any two consecutive moves in the solve move list with the same base are shortened to a single move.
@@ -2011,9 +2008,8 @@ def solve():
             #The first move cannot be checked.
             tempSolveMoves.append(solveMoves[i])
     solveMoves = [i[:] for i in tempSolveMoves]
-    #If permutation parity is valid, solveMoves is valid and can be returned.
-    if parityValid == True:
-        return solveMoves
+    #The solve moves and parity validity are outputted.
+    return solveMoves, parityValid
 
 def meanMoves():
     #This function takes an integer input for a number of solves that should be performed, and then does that many random solves, while counting how many moves each solve took.
