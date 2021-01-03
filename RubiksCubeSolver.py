@@ -367,7 +367,7 @@ def y():
     greenFace[1][1] = tempOrangeFace[1][1]
     greenFace[1][2] = tempOrangeFace[1][2]
 
-#Rotates the cube through the axis going through the top and bottom faces.
+#Rotates the cube through the axis going through the left and right faces.
 def z():
     #This can be broken down into an R and L' move, and a turn of the slice in between.
     R()

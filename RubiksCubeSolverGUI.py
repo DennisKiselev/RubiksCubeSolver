@@ -4,7 +4,7 @@ from RubiksCubeSolver import *
 
 
 #Class to represent facelets on the cube.
-class Facelet():
+class Facelet:
     #Initialises facelet by setting attributes and drawing.
     def __init__(self,surface,colour,colourIndex,points):
         self.surface = surface
@@ -55,6 +55,22 @@ class Facelet():
         #Returns the cube's state to update it.
         return currentState
     
+
+#Class for displaying text.
+class Text:
+    #Renders and blits the text.
+    def __init__(self,message,surface):
+        self.surface = surface
+        font = pygame.font.Font(None, int(round(surface.get_height()/22.5)))
+        self.text = font.render(message, 1, (0,0,0), (128,128,128))
+        self.rect = self.text.get_rect(center=(int(round(surface.get_width()/2)),int(round(surface.get_height()/10))))
+        surface.blit(self.text,(int(round(surface.get_width()/2)) - int(round(self.rect.width/2)),int(round(surface.get_height()/10)) - int(round(self.rect.height/2))))
+
+    #Hides the text so that new text can be drawn.
+    def hide(self):
+        self.surface.fill((128,128,128),self.rect)
+        pygame.display.update(self.rect)
+
 
 def mainGUI():
     #Pygame is initialised.
@@ -110,9 +126,6 @@ def mainGUI():
 
     #Full facelet list that can be used to control all facelets together.
     faceletList = [faceletTop1,faceletTop2,faceletTop3,faceletTop4,faceletTop5,faceletTop6,faceletTop7,faceletTop8,faceletTop9,faceletLeft1,faceletLeft2,faceletLeft3,faceletLeft4,faceletLeft5,faceletLeft6,faceletLeft7,faceletLeft8,faceletLeft9,faceletRight1,faceletRight2,faceletRight3,faceletRight4,faceletRight5,faceletRight6,faceletRight7,faceletRight8,faceletRight9]
-
-    #Draws grids around facelets to make them more distinguishable.
-    pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)
 
     #Updates the display.
     pygame.display.flip()
@@ -188,13 +201,15 @@ def mainGUI():
                         for facelets in faceletList:
                             facelets.update(cubeState)
                         valid = False
-                        message = 'The cube has impossible permutation parity. Check that you have entered the cube properly, or else it may have been assembled incorrectly.'
+                        message = 'The cube has impossible permutation parity. Check that you have entered the cube properly.'
                 #If the cube is not solvable, a message is displayed letting the user know what is wrong.
                 if valid == False:
-                    font = pygame.font.Font(None, 36)
-                    text = font.render(message, 1, (0,0,0), (128,128,128))
-                    screen.blit(text,(0,0))
-                    #REMOVE THE LAST MESSAGE!!!!
+                    #If there is already text displayed, it needs to be hidden.
+                    try:
+                        text.hide()
+                    except:
+                        pass
+                    text = Text(message,screen)
             #If the user presses X, the cube is turned on the x-axis.
             elif event.type == KEYDOWN and event.key == K_x:
                 x()
@@ -210,7 +225,7 @@ def mainGUI():
                 z()
                 for facelets in faceletList:
                     facelets.update(cubeState)
-            #The grid is redrawn onto the cube.
+            #The grid is drawn onto the cube to make the facelets more distinguishable.
             pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
             #The display is updated at the end of every loop.
             pygame.display.flip()
