@@ -458,21 +458,26 @@ def validation():
     
     #The cube needs to be checked for whether it has exactly one of each possible corner type.
     #cornerList is a 2D tuple which contains lists of every possible combination of colours on a corner.
-    cornerList = (['yellow','red','green'],['yellow','orange','green'],['yellow','orange','blue'],['yellow','red','blue'],['white','red','green'],['white','orange','green'],['white','orange','blue'],['white','red','blue'])
+    cornerList = (['yellow','green','red'],['yellow','orange','green'],['yellow','blue','orange'],['yellow','red','blue'],['white','red','green'],['white','green','orange'],['white','orange','blue'],['white','blue','red'])
     #corners is a 2D array which contains information on what the colours of the corners of the cube that has been given are.
-    corners = [[yellowFace[2][0],redFace[0][2],greenFace[0][0]],[yellowFace[2][2],orangeFace[0][0],greenFace[0][2]],[yellowFace[0][2],orangeFace[0][2],blueFace[0][0]],[yellowFace[0][0],redFace[0][0],blueFace[0][2]],[whiteFace[0][0],redFace[2][2],greenFace[2][0]],[whiteFace[0][2],orangeFace[2][0],greenFace[2][2]],[whiteFace[2][2],orangeFace[2][2],blueFace[2][0]],[whiteFace[2][0],redFace[2][0],blueFace[2][2]]]
+    corners = [[yellowFace[2][0],greenFace[0][0],redFace[0][2]],[yellowFace[2][2],orangeFace[0][0],greenFace[0][2]],[yellowFace[0][2],blueFace[0][0],orangeFace[0][2]],[yellowFace[0][0],redFace[0][0],blueFace[0][2]],[whiteFace[0][0],redFace[2][2],greenFace[2][0]],[whiteFace[0][2],greenFace[2][2],orangeFace[2][0]],[whiteFace[2][2],orangeFace[2][2],blueFace[2][0]],[whiteFace[2][0],blueFace[2][2],redFace[2][0]]]
     #cornerCheck is a list which says False 8 times. It keeps track of which corners have been found to be valid.
     cornerCheck = [False for i in range(8)]
     for i in range (8):
         for j in range (8):
             #For every corner in the list 'corners', the list 'cornerList' is searched for whether it contains a list with the same colours, in any order.
-            if compareList(cornerList[i],corners[j]) == True:
+            if cornerList[i] == corners[j]:
                 #If such a list is found, cornerCheck is updated to say True for that index, meaning that corner has been found.
                 cornerCheck[i] = True
-    for i in range (8):
-        #After validating, if False is anywhere in cornerCheck, then that corner must not have been found, so the user is notified which corner is missing.
-        if cornerCheck[i] == False:
-            return False, "The cube is missing a corner with the colours "+cornerList[i][0]+", "+cornerList[i][1]+", and "+cornerList[i][2]+"."
+            #If the corners match by a single clockwise rotation, they are still the same corner, so the corner has been found.
+            elif cornerList[i] == [corners[j][2],corners[j][0],corners[j][1]]:
+                cornerCheck[i] = True
+            #If the corners match by two clockwise rotations, they are still the same corner, so the corner has been found.
+            elif cornerList[i] == [corners[j][1],corners[j][2],corners[j][0]]:
+                cornerCheck[i] = True
+    #After validating, if False is anywhere in cornerCheck, then that corner must not have been found, so the user is notified which corner is missing.
+    if False in cornerCheck:
+        return False, "The cube is invalid. Please check if you have entered all of the corners correctly."
 
     #Edge validation is done in exactly the same manner as corner validation, with a longer list.
     edgeList = (['yellow','green'],['yellow','orange'],['yellow','blue'],['yellow','red'],['green','orange'],['orange','blue'],['blue','red'],['red','green'],['white','green'],['white','orange'],['white','blue'],['white','red'])
