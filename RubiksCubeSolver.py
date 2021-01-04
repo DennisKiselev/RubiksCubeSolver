@@ -82,7 +82,12 @@ def moveInput(scramble):
 
 #Takes a list of moves and returns what moves are needed to reverse it.
 def moveReversal(oldAlg):
-    tempOldAlg = oldAlg[:]
+    #If the algorithm is a single move it will be given as a string, so needs to be treated differently to be made into a list.
+    if isinstance(oldAlg, str) == True:
+        tempOldAlg = []
+        tempOldAlg.append(oldAlg)
+    else:
+        tempOldAlg = oldAlg[:]
     newAlg = []
     while len(tempOldAlg) > 0:
         #Depending on the second character in the string, different moves are needed to reverse them.

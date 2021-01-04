@@ -153,6 +153,7 @@ def mainGUI():
                 #If the user presses escape, the program ends.
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     going = False
+
                 #If the user presses space, the cube is scrambled.
                 elif event.type == KEYDOWN and event.key == K_SPACE:
                     #Scramble is generated and made into a list.
@@ -165,11 +166,13 @@ def mainGUI():
                     screen.blit(background,(0,0))
                     #Scramble moves are displayed to the user.
                     text = Text(scrambleMoves, screen)
+
                 #If the user clicks, the facelet that is clicked on cycles to a new colour.
                 elif event.type == MOUSEBUTTONUP:
                     #Every facelet is checked for whether it has been clicked on and the correct one is updated.
                     for facelets in faceletList:
                         cubeState = facelets.clickCheck(cubeState)
+
                 #If the user presses S, the cube is solved.
                 elif event.type == KEYDOWN and event.key == K_s:
                     #This dictionary contains every possible move and the name of the function it corresponds to.
@@ -204,6 +207,7 @@ def mainGUI():
                         #If there is already text displayed, it needs to be hidden.
                         text.hide()
                         text = Text(message,screen)
+
                 #If the user presses X, the cube is turned on the x-axis.
                 elif event.type == KEYDOWN and event.key == K_x:
                     x()
@@ -213,6 +217,7 @@ def mainGUI():
                 #If the user presses Z, the cube is turned on the z-axis.
                 elif event.type == KEYDOWN and event.key == K_z:
                     z()
+
                 #The facelets are constantly updated to show how they look after any change to the cube happens.
                 for facelets in faceletList:
                     facelets.update(cubeState)
@@ -232,18 +237,63 @@ def mainGUI():
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     going = False
 
-            #The current move's function is called to change the cube's state.
-            moveList[solveMoves[moveCount]]()
-            #Every move has a slight delay to show each move separately.
-            time.sleep(0.1)
-            #Checks if every move has been shown.
-            if moveCount == len(solveMoves) - 1:
-                #Solve is no longer being displayed.
-                solving = False
-                moveCount = 0
-            else:
-                #If the solve is not done showing, the next move can be shown.
-                moveCount = moveCount + 1
+                #If the user presses the right arrow key, the next move in the solve is performed.
+                elif event.type == KEYDOWN and event.key == K_RIGHT:
+                    #The current move's function is called to change the cube's state.
+                    moveList[solveMoves[moveCount]]()
+                    #Checks if every move has been shown.
+                    if moveCount == len(solveMoves) - 1:
+                        #Solve is no longer being displayed.
+                        solving = False
+                        moveCount = 0
+                    else:
+                        #If the solve is not done showing, the next move can be shown.
+                        moveCount = moveCount + 1
+                
+                #If the user presses the left arrow key, the last move in the solve is undone.
+                elif event.type == KEYDOWN and event.key == K_LEFT:
+                    #The last move can only be undone if it exists. If moveCount is 0, there are no moves to undo.
+                    if moveCount != 0:
+                        #The current move's function is called in reverse to change the cube's state.
+                        moveCount = moveCount - 1
+                        moveList[moveReversal(solveMoves[moveCount])]()
+                        
+                elif event.type == KEYDOWN and event.key == K_UP:
+                    auto = True
+                    while auto == True:
+                        for event in pygame.event.get():
+                            #If the user presses quit, the program ends.
+                            if event.type == QUIT:
+                                auto = False
+                                going = False
+                            #If the user presses escape, the program ends.
+                            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                                auto = False
+                                going = False
+                            
+                            elif event.type == KEYDOWN and event.key == K_UP:
+                                auto = False
+
+                        #The current move's function is called to change the cube's state.
+                        moveList[solveMoves[moveCount]]()
+                        #Every move has a slight delay to show each move separately.
+                        time.sleep(0.1)
+                        #Checks if every move has been shown.
+                        if moveCount == len(solveMoves) - 1:
+                            #Solve is no longer being displayed.
+                            solving = False
+                            auto = False
+                            moveCount = 0
+                        else:
+                            #If the solve is not done showing, the next move can be shown.
+                            moveCount = moveCount + 1
+                        #The facelets are constantly updated to show how they look after any change to the cube happens.
+                        for facelets in faceletList:
+                            facelets.update(cubeState)
+                        #The grid is drawn onto the cube to make the facelets more distinguishable.
+                        pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                        #The display is updated at the end of every loop.
+                        pygame.display.flip()
 
             #The facelets are constantly updated to show how they look after any change to the cube happens.
             for facelets in faceletList:
