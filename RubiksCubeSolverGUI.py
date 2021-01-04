@@ -56,7 +56,7 @@ class Facelet:
         return currentState
     
 
-#Class for displaying text.
+#Class for displaying text at the top of the screen, used for scrambles and validation messages.
 class Text:
     #Renders and blits the text.
     def __init__(self,message,surface):
@@ -133,112 +133,129 @@ def mainGUI():
     #Resets cubeState.
     cubeState = cubeReset()
 
+    #Some invisible text to stop program from breaking the first time it tries to hide the text.
+    text = Text('',screen)
+
+    #Keeps track of whether the solve is currently being displayed.
+    solving = False
+    #Keeps track of how many moves have been displayed in this solve.
+    moveCount = 0
     #Window continues to be displayed and repeatedly updated while the condition is true.
     going = True
     while going == True:
-        #Every event in the event list is cycled through and functions are carried out depending on the event.
-        for event in pygame.event.get():
-            #If the user presses quit, the program ends.
-            if event.type == QUIT:
-                going = False
-            #If the user presses escape, the program ends.
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                going = False
-            #If the user presses space, the cube is scrambled.
-            elif event.type == KEYDOWN and event.key == K_SPACE:
-                #Scramble is generated and made into a list.
-                scrambleMoves = scrambleGen()
-                #The cube needs to be in its default state before the scramble is performed.
-                cubeReset()
-                #Cube is updated to contain the scramble.
-                cubeState = moveInput(scrambleMoves)
-                #Another cube is being drawn, so the screen has to be reset by redrawing the background.
-                screen.blit(background,(0,0))
-                #Every facelet is updated.
-                for facelets in faceletList:
-                    facelets.update(cubeState)
-                #Scramble is displayed to the user.
+        #If the solve is not being shown, the program continues as normal.
+        if solving == False:
+            #Every event in the event list is cycled through and functions are carried out depending on the event.
+            for event in pygame.event.get():
+                #If the user presses quit, the program ends.
+                if event.type == QUIT:
+                    going = False
+                #If the user presses escape, the program ends.
+                elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                    going = False
+                #If the user presses space, the cube is scrambled.
+                elif event.type == KEYDOWN and event.key == K_SPACE:
+                    #Scramble is generated and made into a list.
+                    scrambleMoves = scrambleGen()
+                    #The cube needs to be in its default state before the scramble is performed.
+                    cubeReset()
+                    #Cube is updated to contain the scramble.
+                    cubeState = moveInput(scrambleMoves)
+                    #Another cube is being drawn, so the screen has to be reset by redrawing the background.
+                    screen.blit(background,(0,0))
+                    #Scramble moves are displayed to the user.
                     text = Text(scrambleMoves, screen)
-            #If the user clicks, the facelet that is clicked on cycles to a new colour.
-            elif event.type == MOUSEBUTTONUP:
-                #Every facelet is checked for whether it has been clicked on and the correct one is updated.
-                for facelets in faceletList:
-                    cubeState = facelets.clickCheck(cubeState)
-            #If the user presses S, the cube is solved.
-            elif event.type == KEYDOWN and event.key == K_s:
-                #This dictionary contains every possible move and the name of the function it corresponds to.
-                moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
-                #If there is text displayed, it needs to be hidden.
-                try:
-                    text.hide()
-                except:
-                    pass
-                #The cube is validated for whether it is possible to solve.
-                #If the validation returns a boolean and a string, they are both stored.
-                try:
-                    valid, message = validation()
-                #If the validation returns only a boolean, it is stored.
-                except:
-                    valid = validation()
-                #If the cube is valid, it can be solved.
-                if valid == True:
-                    #Colours are converted and the list of moves for the solve is generated.
-                    #Rotations is the number of times the cube was turned around the y-axis before solving.
-                    solveMoves, parityValid = colourConversion(cubeState)
+                #If the user clicks, the facelet that is clicked on cycles to a new colour.
+                elif event.type == MOUSEBUTTONUP:
+                    #Every facelet is checked for whether it has been clicked on and the correct one is updated.
                     for facelets in faceletList:
-                        facelets.update(cubeState)
-                    #If  permutation parity is also valid, the cube can be solved.
-                    if parityValid == True:
-                        #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
-                        cubeState = moveInput(moveReversal(solveMoves))
-                        #Every move in the solve is shown separately with a delay.
-                        for move in solveMoves:
-                            #The current move's function is called to change the cube's state.
-                            moveList[move]()
-                            #The facelets are updated to show how they look after the move is performed.
-                            for facelets in faceletList:
-                                facelets.update(cubeState)
-                            #The grid is redrawn onto the cube.
-                            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
-                            #The display is updated.
-                            pygame.display.flip()
-                            #Every move has a slight delay to show each move separately.
-                            time.sleep(0.1)
-                    #If permutation parity is invalid, the cube cannot be solved.
-                    else:
-                        #Cube is changed back to what it was before the attempted solve.
-                        cubeState = moveInput(moveReversal(solveMoves))
-                        for facelets in faceletList:
-                            facelets.update(cubeState)
-                        valid = False
-                        message = 'The cube has impossible permutation parity. Check that you have entered the cube properly.'
-                #If the cube is not solvable, a message is displayed letting the user know what is wrong.
-                if valid == False:
-                    #If there is already text displayed, it needs to be hidden.
+                        cubeState = facelets.clickCheck(cubeState)
+                #If the user presses S, the cube is solved.
+                elif event.type == KEYDOWN and event.key == K_s:
+                    #This dictionary contains every possible move and the name of the function it corresponds to.
+                    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+                    #If there is text displayed, it needs to be hidden.
+                    text.hide()
+                    #The cube is validated for whether it is possible to solve.
+                    #If the validation returns a boolean and a string, they are both stored.
                     try:
-                        text.hide()
+                        valid, message = validation()
+                    #If the validation returns only a boolean, it is stored.
                     except:
-                        pass
-                    text = Text(message,screen)
-            #If the user presses X, the cube is turned on the x-axis.
-            elif event.type == KEYDOWN and event.key == K_x:
-                x()
+                        valid = validation()
+                    #If the cube is valid, it can be solved.
+                    if valid == True:
+                        #Colours are converted and the list of moves for the solve is generated.
+                        solveMoves, parityValid = colourConversion(cubeState)
+                        #If  permutation parity is also valid, the cube can be solved.
+                        if parityValid == True:
+                            #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
+                            cubeState = moveInput(moveReversal(solveMoves))
+                            #The solve can now be displayed.
+                            solving = True
+                        #If permutation parity is invalid, the cube cannot be solved.
+                        else:
+                            #Cube is changed back to what it was before the attempted solve.
+                            cubeState = moveInput(moveReversal(solveMoves))
+                            valid = False
+                            message = 'The cube has impossible permutation parity. Check that you have entered the cube properly.'
+                    #If the cube is not solvable, a message is displayed letting the user know what is wrong.
+                    if valid == False:
+                        #If there is already text displayed, it needs to be hidden.
+                        text.hide()
+                        text = Text(message,screen)
+                #If the user presses X, the cube is turned on the x-axis.
+                elif event.type == KEYDOWN and event.key == K_x:
+                    x()
+                #If the user presses Y, the cube is turned on the y-axis.
+                elif event.type == KEYDOWN and event.key == K_y:
+                    y()
+                #If the user presses Z, the cube is turned on the z-axis.
+                elif event.type == KEYDOWN and event.key == K_z:
+                    z()
+                #The facelets are constantly updated to show how they look after any change to the cube happens.
                 for facelets in faceletList:
                     facelets.update(cubeState)
-            #If the user presses Y, the cube is turned on the y-axis.
-            elif event.type == KEYDOWN and event.key == K_y:
-                y()
-                for facelets in faceletList:
-                    facelets.update(cubeState)
-            #If the user presses Z, the cube is turned on the z-axis.
-            elif event.type == KEYDOWN and event.key == K_z:
-                z()
-                for facelets in faceletList:
-                    facelets.update(cubeState)
+                #The grid is drawn onto the cube to make the facelets more distinguishable.
+                pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                #The display is updated at the end of every loop.
+                pygame.display.flip()
+
+        #If the cube is solving, the solve is displayed.
+        elif solving == True and len(solveMoves) > 0:
+            #The actions that have to be done when the solve is being displayed are different from what is normally done.
+            for event in pygame.event.get():
+                #If the user presses quit, the program ends.
+                if event.type == QUIT:
+                    going = False
+                #If the user presses escape, the program ends.
+                elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                    going = False
+
+            #The current move's function is called to change the cube's state.
+            moveList[solveMoves[moveCount]]()
+            #Every move has a slight delay to show each move separately.
+            time.sleep(0.1)
+            #Checks if every move has been shown.
+            if moveCount == len(solveMoves) - 1:
+                #Solve is no longer being displayed.
+                solving = False
+                moveCount = 0
+            else:
+                #If the solve is not done showing, the next move can be shown.
+                moveCount = moveCount + 1
+
+            #The facelets are constantly updated to show how they look after any change to the cube happens.
+            for facelets in faceletList:
+                facelets.update(cubeState)
             #The grid is drawn onto the cube to make the facelets more distinguishable.
             pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
             #The display is updated at the end of every loop.
             pygame.display.flip()
+
+        #If the solve is 0 moves long, nothing has to be displayed.
+        elif solving == True:
+            solving = False
 
 
 #If this is the main file being run, the main function is run.
