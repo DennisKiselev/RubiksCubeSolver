@@ -157,6 +157,8 @@ def mainGUI():
                 #Every facelet is updated.
                 for facelets in faceletList:
                     facelets.update(cubeState)
+                #Scramble is displayed to the user.
+                    text = Text(scrambleMoves, screen)
             #If the user clicks, the facelet that is clicked on cycles to a new colour.
             elif event.type == MOUSEBUTTONUP:
                 #Every facelet is checked for whether it has been clicked on and the correct one is updated.

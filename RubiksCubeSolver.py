@@ -416,7 +416,7 @@ def colourConversion(cubeState):
             #Every column on every row on every face is cycled through (essentially every facelet).
             for column in range(3):
                 #Every facelet has its colour changed to what it was before it was solved.
-                cubeState[face][row][column] = solveColourOrder[convertedColours.index(cubeState[face][row][column])]
+                cubeState[face][row][column] = convertedColours[solveColourOrder.index(cubeState[face][row][column])]
 
     #The output is the normal solve output.
     return solveMoves, parityValid
