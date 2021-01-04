@@ -390,26 +390,36 @@ def z():
     greenFace[1][1] = tempWhiteFace[1][1]
     greenFace[2][1] = tempWhiteFace[2][1]
 
-def colourConversion():
-    colourChoice = input("Enter the colour for the cross that you wish to construct: ")
-    cubeState = []
-    cubeState.extend([greenFace,blueFace,redFace,orangeFace,whiteFace,yellowFace])
-    #conversionColours = {'green':['white','yellow','red','orange','blue','green'],'blue':['yellow','white','orange','red','blue','green'],'red':['green','blue','white','yellow','orange','red'],'orange':['green','blue','yellow','white','red','orange'],'white':['green','blue','red','orange','white','yellow'],'yellow':['green','blue','orange','red','yellow','white']}
-    #for face in range(6):
-    #    for row in range(3):
-    #        for column in range(3):
-    #            cubeState[face][row][column] = conversionColours[colourChoice][conversionColours['white'].index(cubeState[face][row][column])]
-    #print(cubeState)
+#Converts all colours on the cube so that it can be solved no matter which positions the centers are in.
+def colourConversion(cubeState):
+    #This list follows the order that the colours of the center pieces of the faces have to be in to make the solve work.
+    solveColourOrder = ['green','blue','red','orange','white','yellow']
+    #This list follows the order of the colours of the center pieces on the input cube.
+    convertedColours = [cubeState[0][1][1],cubeState[1][1][1],cubeState[2][1][1],cubeState[3][1][1],cubeState[4][1][1],cubeState[5][1][1]]
 
-    tempCubeState = [i[:] for i in cubeState]
-    if colourChoice == 'green':
-        cubeState[0] = tempCubeState[5]
-        cubeState[1] = [[tempCubeState[4][2][2],tempCubeState[4][2][1],tempCubeState[4][2][0]],[tempCubeState[4][1][2],tempCubeState[4][1][1],tempCubeState[4][1][0]],[tempCubeState[4][0][2],tempCubeState[4][0][1],tempCubeState[4][0][0]]]
-        cubeState[2] = [[tempCubeState[2][2][0],tempCubeState[2][1][0],tempCubeState[2][0][0]],[tempCubeState[2][2][1],tempCubeState[2][1][1],tempCubeState[2][0][1]],[tempCubeState[2][2][2],tempCubeState[2][1][2],tempCubeState[2][0][2]]]
-        cubeState[3] = [[tempCubeState[3][0][2],tempCubeState[3][1][2],tempCubeState[3][2][2]],[tempCubeState[3][0][1],tempCubeState[3][1][1],tempCubeState[3][2][1]],[tempCubeState[3][0][0],tempCubeState[3][1][0],tempCubeState[3][2][0]]]
-        cubeState[4] = tempCubeState[0]
-        cubeState[5] = [[tempCubeState[1][2][2],tempCubeState[1][2][1],tempCubeState[1][2][0]],[tempCubeState[1][1][2],tempCubeState[1][1][1],tempCubeState[1][1][0]],[tempCubeState[1][0][2],tempCubeState[1][0][1],tempCubeState[1][0][0]]]
-    print(cubeState)
+    #Every face is cycled through.
+    for face in range(6):
+        #Every row on every face is cycled through.
+        for row in range(3):
+            #Every column on every row on every face is cycled through (essentially every facelet).
+            for column in range(3):
+                #Every facelet has its colour changed to what it needs to be for the solver to work by finding the necessary index of the lists.
+                cubeState[face][row][column] = solveColourOrder[convertedColours.index(cubeState[face][row][column])]
+
+    #Solve is performed before undoing the colour conversion.
+    solveMoves, parityValid = solve()
+
+    #Colour conversion is reversed.
+    for face in range(6):
+        #Every row on every face is cycled through.
+        for row in range(3):
+            #Every column on every row on every face is cycled through (essentially every facelet).
+            for column in range(3):
+                #Every facelet has its colour changed to what it was before it was solved.
+                cubeState[face][row][column] = solveColourOrder[convertedColours.index(cubeState[face][row][column])]
+
+    #The output is the normal solve output.
+    return solveMoves, parityValid
 
 #Compares whether one list contains variables that are all contained in another list, but not necessarily in the same order.
 #Takes two lists as an input, outputs a boolean variable.

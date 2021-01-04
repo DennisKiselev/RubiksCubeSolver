@@ -166,6 +166,11 @@ def mainGUI():
             elif event.type == KEYDOWN and event.key == K_s:
                 #This dictionary contains every possible move and the name of the function it corresponds to.
                 moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
+                #If there is text displayed, it needs to be hidden.
+                try:
+                    text.hide()
+                except:
+                    pass
                 #The cube is validated for whether it is possible to solve.
                 #If the validation returns a boolean and a string, they are both stored.
                 try:
@@ -175,8 +180,11 @@ def mainGUI():
                     valid = validation()
                 #If the cube is valid, it can be solved.
                 if valid == True:
-                    #List of moves is generated.
-                    solveMoves, parityValid = solve()
+                    #Colours are converted and the list of moves for the solve is generated.
+                    #Rotations is the number of times the cube was turned around the y-axis before solving.
+                    solveMoves, parityValid = colourConversion(cubeState)
+                    for facelets in faceletList:
+                        facelets.update(cubeState)
                     #If  permutation parity is also valid, the cube can be solved.
                     if parityValid == True:
                         #Solve is reversed so that the cube is back in its scrambled form before the solve is displayed to the user.
