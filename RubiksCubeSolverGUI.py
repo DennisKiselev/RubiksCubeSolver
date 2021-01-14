@@ -1,4 +1,4 @@
-import os, pygame, time
+import pygame, time
 from pygame.locals import *
 from RubiksCubeSolver import *
 
@@ -17,7 +17,7 @@ class Facelet:
             coords[1] = int(round(coords[1]))
         #Facelet is drawn.
         pygame.draw.polygon(self.surface,self.colour,self.points)
-        
+
         #Temporary empty surface is created, used to store the facelet and nothing else, to create a mask. Never displayed.
         offscreen = pygame.Surface(self.surface.get_size())
         offscreen = offscreen.convert()
@@ -54,17 +54,18 @@ class Facelet:
             currentState[self.colourIndex[0]][self.colourIndex[1]][self.colourIndex[2]] = reverse_colour_dict[self.colour]
         #Returns the cube's state to update it.
         return currentState
-    
+
 
 #Class for displaying text at the top of the screen, used for scrambles and validation messages.
 class Text:
     #Renders and blits the text.
-    def __init__(self,message,surface):
+    #The optional down parameter moves the text down by one line, which is useful when a lot of text is being shown.
+    def __init__(self,message,surface,down = 0):
         self.surface = surface
         font = pygame.font.Font(None, int(round(surface.get_height()/22.5)))
         self.text = font.render(message, 1, (0,0,0), (128,128,128))
-        self.rect = self.text.get_rect(center=(int(round(surface.get_width()/2)),int(round(surface.get_height()/10))))
-        surface.blit(self.text,(int(round(surface.get_width()/2)) - int(round(self.rect.width/2)),int(round(surface.get_height()/10)) - int(round(self.rect.height/2))))
+        self.rect = self.text.get_rect(center=(int(round(surface.get_width()/2)),int(round(surface.get_height()/10)) + (down * int(round(surface.get_height()/22.5)))))
+        surface.blit(self.text,(int(round(surface.get_width()/2)) - int(round(self.rect.width/2)),int(round(surface.get_height()/10)) - int(round(self.rect.height/2)) + (down * int(round(surface.get_height()/22.5)))))
 
     #Hides the text so that new text can be drawn.
     def hide(self):
@@ -80,7 +81,7 @@ def mainGUI():
     colour_dict = {"green":(0,255,0),"blue":(0,0,255),"red":(255,0,0),"orange":(255,128,0),"white":(255,255,255),"yellow":(255,255,0)}
 
     #Creates and displays a window
-    screen = pygame.display.set_mode((1280, 720))
+    screen = pygame.display.set_mode((1280,720))
     pygame.display.set_caption("Rubik's Cube Solver")
 
     #Draws a plain black background for the whole window size.
@@ -112,7 +113,7 @@ def mainGUI():
     faceletLeft7 = Facelet(screen,colour_dict[greenFace[2][0]],[0,2,0],[faceletLeft4.points[3],faceletLeft4.points[2],[faceletLeft4.points[1][0],screen.get_height()/2*107/72],[faceletLeft1.points[0][0],faceletLeft6.points[2][1]]])
     faceletLeft8 = Facelet(screen,colour_dict[greenFace[2][1]],[0,2,1],[faceletLeft5.points[3],faceletLeft5.points[2],[faceletLeft5.points[1][0],screen.get_height()/2*14/9],faceletLeft7.points[2]])
     faceletLeft9 = Facelet(screen,colour_dict[greenFace[2][2]],[0,2,2],[faceletLeft6.points[3],faceletLeft6.points[2],[faceletLeft6.points[1][0],screen.get_height()/2*13/8],faceletLeft8.points[2]])
-    
+
     #faceletRight objects work exactly the same as faceletTop and faceletRight, but instead represent the orange face.
     faceletRight1 = Facelet(screen,colour_dict[orangeFace[0][0]],[3,0,0],[faceletTop9.points[2],faceletTop9.points[1],[faceletTop1.points[1][0],faceletLeft3.points[3][1]],faceletLeft3.points[2]])
     faceletRight2 = Facelet(screen,colour_dict[orangeFace[0][1]],[3,0,1],[faceletTop9.points[1],faceletTop6.points[1],[faceletTop2.points[1][0],faceletLeft2.points[3][1]],faceletRight1.points[2]])
@@ -196,6 +197,23 @@ def mainGUI():
                             cubeState = moveInput(moveReversal(solveMoves))
                             #The solve can now be displayed.
                             solving = True
+                            #The solve moves are split into shorter 30 move length lists that can fit on the screen.
+                            splitSolveMoves = []
+                            tempSolveMoves = []
+                            for move in solveMoves:
+                                #Every 30 moves are added to a list as a list.
+                                if len(tempSolveMoves) == 30:
+                                    splitSolveMoves.append(tempSolveMoves)
+                                    tempSolveMoves = []
+                                tempSolveMoves.append(move)
+                                #If this is the last move in the list being checked, then the list needs to be added to the overall list despite being less than 30 moves in length.
+                                if (len(splitSolveMoves) * 30 + len(tempSolveMoves)) == len(solveMoves):
+                                    splitSolveMoves.append(tempSolveMoves)
+                            #The split solve lists are then displayed and made into a list to easily manipulate at the same time.
+                            solveText = []
+                            for i in range(len(splitSolveMoves)):
+                                displayedMoves = (" ".join(splitSolveMoves[i]))
+                                solveText.append(Text(displayedMoves,screen,i))
                         #If permutation parity is invalid, the cube cannot be solved.
                         else:
                             #Cube is changed back to what it was before the attempted solve.
@@ -246,10 +264,13 @@ def mainGUI():
                         #Solve is no longer being displayed.
                         solving = False
                         moveCount = 0
+                        #Solve moves are hidden.
+                        for text in solveText:
+                            text.hide()
                     else:
                         #If the solve is not done showing, the next move can be shown.
                         moveCount = moveCount + 1
-                
+
                 #If the user presses the left arrow key, the last move in the solve is undone.
                 elif event.type == KEYDOWN and event.key == K_LEFT:
                     #The last move can only be undone if it exists. If moveCount is 0, there are no moves to undo.
@@ -257,7 +278,8 @@ def mainGUI():
                         #The current move's function is called in reverse to change the cube's state.
                         moveCount = moveCount - 1
                         moveList[moveReversal(solveMoves[moveCount])]()
-                        
+
+                #If the user presses the up arrow key, the solve is shown automatically.
                 elif event.type == KEYDOWN and event.key == K_UP:
                     auto = True
                     while auto == True:
@@ -270,7 +292,8 @@ def mainGUI():
                             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                                 auto = False
                                 going = False
-                            
+
+                            #Pressing the up arrow again pauses the solve.
                             elif event.type == KEYDOWN and event.key == K_UP:
                                 auto = False
 
@@ -284,6 +307,9 @@ def mainGUI():
                             solving = False
                             auto = False
                             moveCount = 0
+                            #Solve moves are hidden.
+                            for text in solveText:
+                                text.hide()
                         else:
                             #If the solve is not done showing, the next move can be shown.
                             moveCount = moveCount + 1
@@ -306,6 +332,7 @@ def mainGUI():
         #If the solve is 0 moves long, nothing has to be displayed.
         elif solving == True:
             solving = False
+            text = Text('The cube is already solved.', screen)
 
 
 #If this is the main file being run, the main function is run.
