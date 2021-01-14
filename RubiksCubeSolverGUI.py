@@ -255,19 +255,21 @@ def mainGUI():
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     going = False
 
+                #Solve is stopped when the S key is pressed again.
+                elif event.type == KEYDOWN and event.key == K_s:
+                    #Solve is no longer being displayed.
+                    solving = False
+                    moveCount = 0
+                    #Solve moves are hidden.
+                    for text in solveText:
+                        text.hide()
+
                 #If the user presses the right arrow key, the next move in the solve is performed.
                 elif event.type == KEYDOWN and event.key == K_RIGHT:
                     #The current move's function is called to change the cube's state.
                     moveList[solveMoves[moveCount]]()
                     #Checks if every move has been shown.
-                    if moveCount == len(solveMoves) - 1:
-                        #Solve is no longer being displayed.
-                        solving = False
-                        moveCount = 0
-                        #Solve moves are hidden.
-                        for text in solveText:
-                            text.hide()
-                    else:
+                    if moveCount != len(solveMoves) - 1:
                         #If the solve is not done showing, the next move can be shown.
                         moveCount = moveCount + 1
 
@@ -304,12 +306,7 @@ def mainGUI():
                         #Checks if every move has been shown.
                         if moveCount == len(solveMoves) - 1:
                             #Solve is no longer being displayed.
-                            solving = False
                             auto = False
-                            moveCount = 0
-                            #Solve moves are hidden.
-                            for text in solveText:
-                                text.hide()
                         else:
                             #If the solve is not done showing, the next move can be shown.
                             moveCount = moveCount + 1
