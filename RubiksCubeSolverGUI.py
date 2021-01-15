@@ -60,17 +60,32 @@ class Facelet:
 class Text:
     #Renders and blits the text.
     #The optional down parameter moves the text down by a certain number of lines, which is useful when a lot of text is being shown.
-    def __init__(self,message,surface,down = 0):
+    #The optional colour parameter is to change the colour of the text, otherwise it is black by default.
+    def __init__(self,message,surface,down = 0,textColour = (0,0,0),customPos = False):
         self.surface = surface
         font = pygame.font.Font(None, int(round(surface.get_height()/22.5)))
-        self.text = font.render(message, 1, (0,0,0), (128,128,128))
+        self.text = font.render(message, 1, textColour, (128,128,128))
+        #self.rect is the rectangle of space that the text in.
         self.rect = self.text.get_rect(center=(int(round(surface.get_width()/2)),int(round(surface.get_height()/10)) + (down * int(round(surface.get_height()/22.5)))))
-        surface.blit(self.text,(int(round(surface.get_width()/2)) - int(round(self.rect.width/2)),int(round(surface.get_height()/10)) - int(round(self.rect.height/2)) + (down * int(round(surface.get_height()/22.5)))))
+        #self.pos is the top left corner of the text's rectangle.
+        self.pos = int(round(surface.get_width()/2)) - int(round(self.rect.width/2)),int(round(surface.get_height()/10)) - int(round(self.rect.height/2)) + (down * int(round(surface.get_height()/22.5)))
+        #If a custom position is passed in, the text's top left corner will be in that position.
+        #If the text does not have a custom position, it is automatically placed in the top middle.
+        if customPos != False:
+            self.pos = customPos
+        surface.blit(self.text,self.pos)
 
     #Hides the text so that new text can be drawn.
     def hide(self):
         self.surface.fill((128,128,128),self.rect)
-        pygame.display.update(self.rect)
+    
+    #Outputs the text's position, useful for when it needs to be covered by red text in the exact right position.
+    def get_pos(self):
+        return self.pos
+
+    #Shows text when it has been hidden.
+    def showText(self):
+        self.surface.blit(self.text,self.pos)
 
 
 def mainGUI():
@@ -270,6 +285,25 @@ def mainGUI():
                     if moveCount != len(solveMoves):
                         #The current move's function is called to change the cube's state.
                         moveList[solveMoves[moveCount]]()
+
+                        #Red text covers the solve moves to show which moves have already been done.
+                        #Loops for how many lines of moves have already been done, plus one for the current line.
+                        for i in range(moveCount // 30 + 1):
+                            #For the number of lines of moves that are fully done, each line is written again in red.
+                            for j in range(i):
+                                displayedMoves = (" ".join(splitSolveMoves[j]))
+                                Text(displayedMoves,screen,j,(255,0,0))
+                            #Checks if this is the last loop.
+                            if i == moveCount // 30:
+                                #A new list of every move that has been done on the newest line is made.
+                                tempTextList = []
+                                for j in range(moveCount % 30 + 1):
+                                    tempTextList.append(splitSolveMoves[i][j])
+                                #Every move in this list is made red.
+                                displayedMoves = (" ".join(tempTextList))
+                                #The Text class's get_pos function is used to write the text directly over the old text.
+                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
+
                         #If the solve is not done showing, the next move can be shown.
                         moveCount = moveCount + 1
 
@@ -280,6 +314,27 @@ def mainGUI():
                         #The current move's function is called in reverse to change the cube's state.
                         moveCount = moveCount - 1
                         moveList[moveReversal(solveMoves[moveCount])]()
+
+                        for text in solveText:
+                            text.showText()
+
+                        #Red text covers the solve moves to show which moves have already been done.
+                        #Loops for how many lines of moves have already been done, plus one for the current line.
+                        for i in range(moveCount // 30 + 1):
+                            #For the number of lines of moves that are fully done, each line is written again in red.
+                            for j in range(i):
+                                displayedMoves = (" ".join(splitSolveMoves[j]))
+                                Text(displayedMoves,screen,j,(255,0,0))
+                            #Checks if this is the last loop.
+                            if i == moveCount // 30:
+                                #A new list of every move that has been done on the newest line is made.
+                                tempTextList = []
+                                for j in range(moveCount % 30):
+                                    tempTextList.append(splitSolveMoves[i][j])
+                                #Every move in this list is made red.
+                                displayedMoves = (" ".join(tempTextList))
+                                #The Text class's get_pos function is used to write the text directly over the old text.
+                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
 
                 #If the user presses the up arrow key, the solve is shown automatically.
                 elif event.type == KEYDOWN and event.key == K_UP:
@@ -306,6 +361,24 @@ def mainGUI():
                             #Solve is no longer being displayed.
                             auto = False
                         else:
+                            #Red text covers the solve moves to show which moves have already been done.
+                            #Loops for how many lines of moves have already been done, plus one for the current line.
+                            for i in range(moveCount // 30 + 1):
+                                #For the number of lines of moves that are fully done, each line is written again in red.
+                                for j in range(i):
+                                    displayedMoves = (" ".join(splitSolveMoves[j]))
+                                    Text(displayedMoves,screen,j,(255,0,0))
+                                #Checks if this is the last loop.
+                                if i == moveCount // 30:
+                                    #A new list of every move that has been done on the newest line is made.
+                                    tempTextList = []
+                                    for j in range(moveCount % 30 + 1):
+                                        tempTextList.append(splitSolveMoves[i][j])
+                                    #Every move in this list is made red.
+                                    displayedMoves = (" ".join(tempTextList))
+                                    #The Text class's get_pos function is used to write the text directly over the old text.
+                                    Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
+
                             #The current move's function is called to change the cube's state.
                             moveList[solveMoves[moveCount]]()
                             #If the solve is not done showing, the next move can be shown.
