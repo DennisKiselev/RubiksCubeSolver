@@ -59,7 +59,7 @@ class Facelet:
 #Class for displaying text at the top of the screen, used for scrambles and validation messages.
 class Text:
     #Renders and blits the text.
-    #The optional down parameter moves the text down by one line, which is useful when a lot of text is being shown.
+    #The optional down parameter moves the text down by a certain number of lines, which is useful when a lot of text is being shown.
     def __init__(self,message,surface,down = 0):
         self.surface = surface
         font = pygame.font.Font(None, int(round(surface.get_height()/22.5)))
@@ -266,10 +266,10 @@ def mainGUI():
 
                 #If the user presses the right arrow key, the next move in the solve is performed.
                 elif event.type == KEYDOWN and event.key == K_RIGHT:
-                    #The current move's function is called to change the cube's state.
-                    moveList[solveMoves[moveCount]]()
                     #Checks if every move has been shown.
-                    if moveCount != len(solveMoves) - 1:
+                    if moveCount != len(solveMoves):
+                        #The current move's function is called to change the cube's state.
+                        moveList[solveMoves[moveCount]]()
                         #If the solve is not done showing, the next move can be shown.
                         moveCount = moveCount + 1
 
@@ -299,15 +299,15 @@ def mainGUI():
                             elif event.type == KEYDOWN and event.key == K_UP:
                                 auto = False
 
-                        #The current move's function is called to change the cube's state.
-                        moveList[solveMoves[moveCount]]()
                         #Every move has a slight delay to show each move separately.
                         time.sleep(0.1)
                         #Checks if every move has been shown.
-                        if moveCount == len(solveMoves) - 1:
+                        if moveCount == len(solveMoves):
                             #Solve is no longer being displayed.
                             auto = False
                         else:
+                            #The current move's function is called to change the cube's state.
+                            moveList[solveMoves[moveCount]]()
                             #If the solve is not done showing, the next move can be shown.
                             moveCount = moveCount + 1
                         #The facelets are constantly updated to show how they look after any change to the cube happens.
