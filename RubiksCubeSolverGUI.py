@@ -78,10 +78,6 @@ class Text:
     #Hides the text so that new text can be drawn.
     def hide(self):
         self.surface.fill((128,128,128),self.rect)
-    
-    #Outputs the text's position, useful for when it needs to be covered by red text in the exact right position.
-    def get_pos(self):
-        return self.pos
 
     #Shows text when it has been hidden.
     def showText(self):
@@ -96,7 +92,7 @@ def mainGUI():
     colour_dict = {"green":(0,255,0),"blue":(0,0,255),"red":(255,0,0),"orange":(255,128,0),"white":(255,255,255),"yellow":(255,255,0)}
 
     #Creates and displays a window
-    screen = pygame.display.set_mode((1280,720))
+    screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption("Rubik's Cube Solver")
 
     #Draws a plain black background for the whole window size.
@@ -255,7 +251,8 @@ def mainGUI():
                 for facelets in faceletList:
                     facelets.update(cubeState)
                 #The grid is drawn onto the cube to make the facelets more distinguishable.
-                pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],int(round(screen.get_height()/180)))
+
                 #The display is updated at the end of every loop.
                 pygame.display.flip()
 
@@ -301,8 +298,8 @@ def mainGUI():
                                     tempTextList.append(splitSolveMoves[i][j])
                                 #Every move in this list is made red.
                                 displayedMoves = (" ".join(tempTextList))
-                                #The Text class's get_pos function is used to write the text directly over the old text.
-                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
+                                #The old text's position is used to write the text directly over the old text.
+                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].pos))
 
                         #If the solve is not done showing, the next move can be shown.
                         moveCount = moveCount + 1
@@ -333,27 +330,13 @@ def mainGUI():
                                     tempTextList.append(splitSolveMoves[i][j])
                                 #Every move in this list is made red.
                                 displayedMoves = (" ".join(tempTextList))
-                                #The Text class's get_pos function is used to write the text directly over the old text.
-                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
+                                #The old text's position is used to write the text directly over the old text.
+                                Text(displayedMoves,screen,i,(255,0,0),(solveText[i].pos))
 
                 #If the user presses the up arrow key, the solve is shown automatically.
                 elif event.type == KEYDOWN and event.key == K_UP:
                     auto = True
                     while auto == True:
-                        for event in pygame.event.get():
-                            #If the user presses quit, the program ends.
-                            if event.type == QUIT:
-                                auto = False
-                                going = False
-                            #If the user presses escape, the program ends.
-                            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                                auto = False
-                                going = False
-
-                            #Pressing the up arrow again pauses the solve.
-                            elif event.type == KEYDOWN and event.key == K_UP:
-                                auto = False
-
                         #Every move has a slight delay to show each move separately.
                         time.sleep(0.1)
                         #Checks if every move has been shown.
@@ -376,8 +359,8 @@ def mainGUI():
                                         tempTextList.append(splitSolveMoves[i][j])
                                     #Every move in this list is made red.
                                     displayedMoves = (" ".join(tempTextList))
-                                    #The Text class's get_pos function is used to write the text directly over the old text.
-                                    Text(displayedMoves,screen,i,(255,0,0),(solveText[i].get_pos()))
+                                    #The old text's position is used to write the text directly over the old text.
+                                    Text(displayedMoves,screen,i,(255,0,0),(solveText[i].pos))
 
                             #The current move's function is called to change the cube's state.
                             moveList[solveMoves[moveCount]]()
@@ -387,15 +370,29 @@ def mainGUI():
                         for facelets in faceletList:
                             facelets.update(cubeState)
                         #The grid is drawn onto the cube to make the facelets more distinguishable.
-                        pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+                        pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],int(round(screen.get_height()/180)))        
                         #The display is updated at the end of every loop.
                         pygame.display.flip()
+
+                        for event in pygame.event.get():
+                            #If the user presses quit, the program ends.
+                            if event.type == QUIT:
+                                auto = False
+                                going = False
+                            #If the user presses escape, the program ends.
+                            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                                auto = False
+                                going = False
+
+                            #Pressing the up arrow again pauses the solve.
+                            elif event.type == KEYDOWN and event.key == K_UP:
+                                auto = False
 
             #The facelets are constantly updated to show how they look after any change to the cube happens.
             for facelets in faceletList:
                 facelets.update(cubeState)
             #The grid is drawn onto the cube to make the facelets more distinguishable.
-            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],4)        
+            pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],int(round(screen.get_height()/180)))        
             #The display is updated at the end of every loop.
             pygame.display.flip()
 
@@ -403,7 +400,6 @@ def mainGUI():
         elif solving == True:
             solving = False
             text = Text('The cube is already solved.', screen)
-
 
 #If this is the main file being run, the main function is run.
 if __name__ == '__main__':

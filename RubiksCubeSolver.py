@@ -1,5 +1,7 @@
 import random #For scramble generation
-import statistics #For meanMoves function
+import statistics, time, pandas #For meanMoves function
+import numpy as np #For histogram
+from matplotlib import pyplot as plt #For histogram
 
 #Resets the cube to its default state.
 def cubeReset():
@@ -52,19 +54,6 @@ def scrambleGen():
     #The complete scramble is returned.
     scramble = (" ".join(scramble))
     return scramble
-
-#Receives a custom scramble input and performs it.
-def scrambleInput():
-    #This dictionary contains every possible move and the name of the function it corresponds to.
-    moveList = {'U':U,'D':D,'F':F,'B':B,'R':R,'L':L,'U2':U2,'D2':D2,'F2':F2,'B2':B2,'R2':R2,'L2':L2,"U'":UP,"D'":DP,"F'":FP,"B'":BP,"R'":RP,"L'":LP}
-    scramble = input('Input your custom scramble: ')
-    #The input is split into a list to be performed.
-    scramble = scramble.split()
-    #The cube needs to be in its default state before being scrambled.
-    cubeReset()
-    #The dictionary is used to cycle through the scramble and perform the function corresponding to each move.
-    for move in scramble:
-        moveList[move]()
 
 #Takes a list of moves and returns the state of the cube.
 def moveInput(scramble):
@@ -597,7 +586,7 @@ def solve():
                 moveList[requiredMoves[i]]()
 
         if blueFace[2][1] == 'white':
-            possibleMoves = {'green':["B'",'D',"L'","D'"],'red':["B'","L'"],'blue':["B'","D'","L'",'D'],'orange':['B','R']}
+            possibleMoves = {'green':["B'",'D',"L'","D'"],'red':["B'","L'"],'blue':["B'",'D',"L'","D'"],'orange':['B','R']}
             requiredMoves = possibleMoves[whiteFace[2][1]]
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
@@ -770,18 +759,6 @@ def solve():
         F2Lsolved[3] = True
     while F2Lsolved != [True,True,True,True]:
         requiredMoves = []
-        #Check if green-red-white pair is solved.
-        if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
-            F2Lsolved[0] = True
-        #Check if blue-red-white pair is solved.
-        if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
-            F2Lsolved[1] = True
-        #Check if blue-orange-white pair is solved.
-        if blueFace[1][0] == 'blue' and blueFace[2][0] == 'blue' and orangeFace[1][2] == 'orange' and orangeFace[2][2] == 'orange' and whiteFace[2][2] == 'white':
-            F2Lsolved[2] = True
-        #Check if green-orange-white pair is solved.
-        if orangeFace[1][0] == 'orange' and orangeFace[2][0] == 'orange' and greenFace[1][2] == 'green' and greenFace[2][2] == 'green' and whiteFace[0][2] == 'white':
-            F2Lsolved[3] = True
 
         #This 2D array contains every edge in the middle horizontal slice.
         horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
@@ -902,14 +879,13 @@ def solve():
             edgeColours = [greenFace[2][0],redFace[2][2],whiteFace[0][0]]
             edgeColours.pop(edgeColours.index('white'))
             #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
-            if compareList(['green','red'],edgeColours) == True:
-                pass
-            else:
+            if compareList(['green','red'],edgeColours) == False:
                 #Three moves required to take the corner out.
                 requiredMoves = ["L'","U'",'L']
                 for i in range(len(requiredMoves)):
                     solveMoves.append(requiredMoves[i])
                     moveList[requiredMoves[i]]()
+                horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
@@ -937,14 +913,13 @@ def solve():
             edgeColours = [blueFace[2][2],redFace[2][0],whiteFace[2][0]]
             edgeColours.pop(edgeColours.index('white'))
             #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
-            if compareList(['blue','red'],edgeColours) == True:
-                pass
-            else:
+            if compareList(['blue','red'],edgeColours) == False:
                 #Three moves required to take the corner out.
                 requiredMoves = ['L','U',"L'"]
                 for i in range(len(requiredMoves)):
                     solveMoves.append(requiredMoves[i])
                     moveList[requiredMoves[i]]()
+                horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
@@ -972,14 +947,13 @@ def solve():
             edgeColours = [blueFace[2][0],orangeFace[2][2],whiteFace[2][2]]
             edgeColours.pop(edgeColours.index('white'))
             #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
-            if compareList(['blue','orange'],edgeColours) == True:
-                pass
-            else:
+            if compareList(['blue','orange'],edgeColours) == False:
                 #Three moves required to take the corner out.
                 requiredMoves = ["R'","U'",'R']
                 for i in range(len(requiredMoves)):
                     solveMoves.append(requiredMoves[i])
                     moveList[requiredMoves[i]]()
+                horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
@@ -1007,14 +981,13 @@ def solve():
             edgeColours = [greenFace[2][2],orangeFace[2][0],whiteFace[0][2]]
             edgeColours.pop(edgeColours.index('white'))
             #If the two non-white colours match the colours of the faces it is between, then the corner is already positioned correctly.
-            if compareList(['green','orange'],edgeColours) == True:
-                pass
-            else:
+            if compareList(['green','orange'],edgeColours) == False:
                 #Three moves required to take the corner out.
                 requiredMoves = ['R','U',"R'"]
                 for i in range(len(requiredMoves)):
                     solveMoves.append(requiredMoves[i])
                     moveList[requiredMoves[i]]()
+                horizontalEdgeList = [[greenFace[1][0],redFace[1][2]],[redFace[1][0],blueFace[1][2]],[blueFace[1][0],orangeFace[1][2]],[orangeFace[1][0],greenFace[1][2]]]
             #Search for the edge corresponding to this corner in the middle slice.
             for i in range(len(horizontalEdgeList)):
                 if compareList(edgeColours,horizontalEdgeList[i]) == True:
@@ -1147,7 +1120,7 @@ def solve():
                     requiredMoves = ["U'","L'",'U','L']
                 #F2L 4
                 elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'red':
-                    requiredMoves = ["L'","U'",'L']
+                    requiredMoves = ['F','U',"F'"]
                 #F2L 6
                 elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'green':
                     requiredMoves = ['U',"L'","U'",'L','U2',"L'",'U','L']
@@ -1193,7 +1166,7 @@ def solve():
                     requiredMoves = ["L'","B'",'U2','B','L']
                 #F2L 23
                 elif redFace[0][1] == 'green' and yellowFace[1][0] == 'red':
-                    requiredMoves = ['L',"F'","L'",'F','U','F','U',"F'"]
+                    requiredMoves = ['U','L',"F'","L'",'F','U','F','U',"F'"]
                 #F2L 24
                 elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'green':
                     requiredMoves = ['L','U','F',"U'","F'","L'",'F',"U'","F'"]
@@ -1298,7 +1271,7 @@ def solve():
                     requiredMoves = ["U'","B'",'U','B']
                 #F2L 4
                 elif greenFace[0][1] == 'red' and yellowFace[2][1] == 'blue':
-                    requiredMoves = ["B'","U'",'B']
+                    requiredMoves = ['L','U',"L'"]
                 #F2L 6
                 elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'red':
                     requiredMoves = ['U',"B'","U'",'B','U2',"B'",'U','B']
@@ -1344,7 +1317,7 @@ def solve():
                     requiredMoves = ["B'","R'",'U2','R','B']
                 #F2L 23
                 elif blueFace[0][1] == 'red' and yellowFace[0][1] == 'blue':
-                    requiredMoves = ['B',"L'","B'",'L','U','L','U',"L'"]
+                    requiredMoves = ['U','B',"L'","B'",'L','U','L','U',"L'"]
                 #F2L 24
                 elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'red':
                     requiredMoves = ['B','U','L',"U'","L'","B'",'L',"U'","L'"]
@@ -1449,7 +1422,7 @@ def solve():
                     requiredMoves = ["U'","R'",'U','R']
                 #F2L 4
                 elif redFace[0][1] == 'blue' and yellowFace[1][0] == 'orange':
-                    requiredMoves = ["R'","U'",'R']
+                    requiredMoves = ['B','U',"B'"]
                 #F2L 6
                 elif greenFace[0][1] == 'orange' and yellowFace[2][1] == 'blue':
                     requiredMoves = ['U',"R'","U'",'R','U2',"R'",'U','R']
@@ -1495,7 +1468,7 @@ def solve():
                     requiredMoves = ["R'","F'",'U2','F','R']
                 #F2L 23
                 elif orangeFace[0][1] == 'blue' and yellowFace[1][2] == 'orange':
-                    requiredMoves = ['R',"B'","R'",'B','U','B','U',"B'"]
+                    requiredMoves = ['U','R',"B'","R'",'B','U','B','U',"B'"]
                 #F2L 24
                 elif blueFace[0][1] == 'orange' and yellowFace[0][1] == 'blue':
                     requiredMoves = ['R','U','B',"U'","B'","R'",'B',"U'","B'"]
@@ -1600,7 +1573,7 @@ def solve():
                     requiredMoves = ["U'","F'",'U','F']
                 #F2L 4
                 elif blueFace[0][1] == 'orange' and yellowFace[0][1] == 'green':
-                    requiredMoves = ["F'","U'",'F']
+                    requiredMoves = ['R','U',"R'"]
                 #F2L 6
                 elif redFace[0][1] == 'green' and yellowFace[1][0] == 'orange':
                     requiredMoves = ['U',"F'","U'",'F','U2',"F'",'U','F']
@@ -1646,7 +1619,7 @@ def solve():
                     requiredMoves = ["F'","L'",'U2','L','F']
                 #F2L 23
                 elif greenFace[0][1] == 'orange' and yellowFace[2][1] == 'green':
-                    requiredMoves = ['F',"R'","F'",'R','U','R','U',"R'"]
+                    requiredMoves = ['U','F',"R'","F'",'R','U','R','U',"R'"]
                 #F2L 24
                 elif orangeFace[0][1] == 'green' and yellowFace[1][2] == 'orange':
                     requiredMoves = ['F','U','R',"U'","R'","F'",'R',"U'","R'"]
@@ -1696,6 +1669,19 @@ def solve():
         for i in range(len(requiredMoves)):
             solveMoves.append(requiredMoves[i])
             moveList[requiredMoves[i]]()
+        
+        #Check if green-red-white pair is solved.
+        if greenFace[1][0] == 'green' and greenFace[2][0] == 'green' and redFace[1][2] == 'red' and redFace[2][2] == 'red' and whiteFace[0][0] == 'white':
+            F2Lsolved[0] = True
+        #Check if blue-red-white pair is solved.
+        if redFace[1][0] == 'red' and redFace[2][0] == 'red' and blueFace[1][2] == 'blue' and blueFace[2][2] == 'blue' and whiteFace[2][0] == 'white':
+            F2Lsolved[1] = True
+        #Check if blue-orange-white pair is solved.
+        if blueFace[1][0] == 'blue' and blueFace[2][0] == 'blue' and orangeFace[1][2] == 'orange' and orangeFace[2][2] == 'orange' and whiteFace[2][2] == 'white':
+            F2Lsolved[2] = True
+        #Check if green-orange-white pair is solved.
+        if orangeFace[1][0] == 'orange' and orangeFace[2][0] == 'orange' and greenFace[1][2] == 'green' and greenFace[2][2] == 'green' and whiteFace[0][2] == 'white':
+            F2Lsolved[3] = True
 
     #-=-=-=-=-=-=-=-=-=-=-=OLL=-=-=-=-=-=-=-=-=-=-=-
     requiredMoves = []
@@ -1705,8 +1691,6 @@ def solve():
         #This grants the benefit of not needing to program extra algorithms for each orientation of the yellow face.
         for _ in range(4):
             #Now an algorithm can be performed, from http://algdb.net/puzzle/333/oll.
-            U()
-            solveMoves.append('U')
             #OLL 1
             if [greenFace[0][1],redFace[0][0],redFace[0][1],redFace[0][2],blueFace[0][1],orangeFace[0][0],orangeFace[0][1],orangeFace[0][2]] == ['yellow','yellow','yellow','yellow','yellow','yellow','yellow','yellow']:
                 requiredMoves = ['R', 'U2', 'R2', 'F', 'R', "F'", 'U2', "R'", 'F', 'R', "F'"]
@@ -1881,9 +1865,13 @@ def solve():
             
             #If OLL is not complete, requiredMoves is either the necessary algorithm or an empty list, so either way, it can be performed.
             if yellowFace != [['yellow','yellow','yellow'],['yellow','yellow','yellow'],['yellow','yellow','yellow']]:
-                for i in range(len(requiredMoves)):
-                    solveMoves.append(requiredMoves[i])
-                    moveList[requiredMoves[i]]()
+                if len(requiredMoves) > 0:
+                    for i in range(len(requiredMoves)):
+                        solveMoves.append(requiredMoves[i])
+                        moveList[requiredMoves[i]]()
+                else:
+                    U()
+                    solveMoves.append('U')
             #If OLL is already complete, the loop does not need to continue.
             else:
                 break
@@ -2028,19 +2016,49 @@ def solve():
             #The first move cannot be checked.
             tempSolveMoves.append(solveMoves[i])
     solveMoves = [i[:] for i in tempSolveMoves]
-    #The solve moves and parity validity are outputted.
+   
+    #The solve moves and parity validity are output.
     return solveMoves, parityValid
 
-def meanMoves():
+def meanMoves(iterations):
     #This function takes an integer input for a number of solves that should be performed, and then does that many random solves, while counting how many moves each solve took.
-    #At the end, it outputs the mean number of moves required for every solve.
+    #At the end, it outputs the an analysis of the solve lengths.
+    scrambles = []
     lengths = []
-    for _ in range (int(input('How many solves would you like to test? '))):
-        scrambleGen()
-        lengths.append(len(solve()))
-    print(statistics.mean(lengths))
+    start = time.time()
+    for _ in range (iterations):
+        scramble = scrambleGen()
+        current = time.time()
+        print(current - start)
+        scrambles.append(scramble)
+        solveMoves, parityValid = solve()
+        lengths.append(len(solveMoves))
+    end = time.time()
+    print("Mean = ",statistics.mean(lengths))
+    print("Median = ",statistics.median(lengths))
+    print("Standard Deviation = ",statistics.pstdev(lengths))
+    print("Maximum value = ",max(lengths))
+    print("Maximum value scramble = ",scrambles[lengths.index(max(lengths))])
+    print("Minimum value = ",min(lengths))
+    print("Minimum value scramble = ",scrambles[lengths.index(min(lengths))])
+    print("Time taken = ",end - start)
 
-def main():
+    # fixed bin size
+    bins = np.arange(0, 150, 1) # fixed bin size
+
+    plt.xlim([min(lengths), max(lengths) + 1])
+
+    plt.hist(lengths, bins=bins)
+    plt.title('Solve length distribution')
+    plt.xlabel('Solve length')
+    plt.ylabel('Count')
+
+    plt.show()
+
+#If this is the main file being run, the main function is run.
+if __name__ == '__main__':
     cubeReset()
-
-main()
+    greenFace = 0
+    meanMoves(100000)
+else:
+    cubeReset()
