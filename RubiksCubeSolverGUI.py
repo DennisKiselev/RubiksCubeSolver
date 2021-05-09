@@ -113,20 +113,22 @@ def mainGUI():
 
     #Initial screen shows instructions and resolution input.
     #Each instruction is a separate text object, each one is shown below the last.
-    text1 = Text("List of controls:", screen, title = True)
-    text2 = Text("Click on the cube to change its colours.", screen, 2)
-    text3 = Text("Escape = Exit", screen, 3)
-    text4 = Text("Space = Scramble cube", screen, 4)
-    text5 = Text("X, Y, Z = Rotate cube around X, Y, or Z axis", screen, 5)
-    text6 = Text("R = Reset cube", screen, 6)
-    text6 = Text("S = Enter solve mode", screen, 7)
-    text7 = Text("During solve mode:", screen, 9,  title = True)
-    text8 = Text("Right arrow key = Show next move", screen, 11)
-    text9 = Text("Left arrow key = Undo last move", screen, 12)
-    text10 = Text("Up arrow key = Show solve automatically", screen, 13)
-    text11 = Text("Down arrow key = Undo solve automatically", screen, 14)
-    text12 = Text("S = Exit solve mode", screen, 15)
-    text13 = Text("Press enter to proceed.", screen, 17)
+    text1 = Text("List of controls:", screen, -1, title = True)
+    text2 = Text("Click on the cube to change its colours.", screen, 1)
+    text3 = Text("Escape = Exit", screen, 2)
+    text4 = Text("Space = Scramble cube", screen, 3)
+    text5 = Text("X, Y, Z = Rotate cube around X, Y, or Z axis", screen, 4)
+    text6 = Text("R = Reset cube", screen, 5)
+    text6 = Text("S = Enter solve mode", screen, 6)
+    text7 = Text("During solve mode:", screen, 8,  title = True)
+    text8 = Text("Right arrow key = Show next move", screen, 10)
+    text9 = Text("Left arrow key = Undo last move", screen, 11)
+    text10 = Text("Up arrow key = Show solve automatically", screen, 12)
+    text11 = Text("Down arrow key = Undo solve automatically", screen, 13)
+    text12 = Text("S = Exit solve mode", screen, 14)
+    text13 = Text("(Optional) Type to enter custom window resolution - values too large will default to 720", screen, 16)
+    text14 = Text("Height (Pixels) = ", screen, 17)
+    text15 = Text("Press enter to proceed.", screen, 19)
 
     #Display is updated to show text.
     pygame.display.flip()
@@ -136,19 +138,78 @@ def mainGUI():
     going = True
     #Waiting keeps track of whether the instructions should be showing.
     waiting = True
+    #Resolution keeps track of the current resolution input.
+    resolution = 720
     while waiting == True:
         for event in pygame.event.get():
             #If the user presses quit, the program ends.
             if event.type == QUIT:
                 waiting = False
                 going = False
-            #If the user presses escape, the program ends.
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                waiting = False
-                going = False
-            #If the user presses enter, the cube can be shown.
-            elif event.type == KEYDOWN and event.key == K_RETURN:
-                waiting = False
+            #If the user presses a key, a new selection happens.
+            elif event.type == KEYDOWN:
+                #If the user presses escape, the program ends.
+                if event.key == K_ESCAPE:
+                    waiting = False
+                    going = False
+                #If the user presses enter, the cube can be shown.
+                elif event.key == K_RETURN:
+                    waiting = False
+                #Any other key is a resolution input.
+                else:
+                    #If backspace is pressed, the last digit of resolution is removed.
+                    if event.key == K_BACKSPACE:
+                        #Last digit of value is removed.
+                        resolution = resolution // 10
+                        
+                        screen.blit(background,(0,0))
+                        pygame.display.update(text14.rect)
+                    #If any number is pressed, it is added to the end of the resolution.
+                    elif event.key == K_0:
+                        resolution = int(str(resolution) + "0")
+
+                    elif event.key == K_1:
+                        resolution = int(str(resolution) + "1")
+
+                    elif event.key == K_2:
+                        resolution = int(str(resolution) + "2")
+
+                    elif event.key == K_3:
+                        resolution = int(str(resolution) + "3")
+
+                    elif event.key == K_4:
+                        resolution = int(str(resolution) + "4")
+
+                    elif event.key == K_5:
+                        resolution = int(str(resolution) + "5")
+
+                    elif event.key == K_6:
+                        resolution = int(str(resolution) + "6")
+
+                    elif event.key == K_7:
+                        resolution = int(str(resolution) + "7")
+
+                    elif event.key == K_8:
+                        resolution = int(str(resolution) + "8")
+
+                    elif event.key == K_9:
+                        resolution = int(str(resolution) + "9")
+
+            text14 = Text("Height (Pixels) = "+str(resolution),screen, 17)
+            pygame.display.update(text14.rect)
+
+    #If a resolution of 0 is given, then it is set back to its default value.
+    if resolution == 0:
+        resolution = 720
+    #If resolution is too high, then it is set back to its default value.
+    elif resolution > 4320:
+        resolution = 720
+
+    #Window is updated with new resolution.
+    screen = pygame.display.set_mode((round(resolution*16/9), resolution))
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((128,128,128))
 
     #If the user has not quit, the cube is displayed.
     if going == True:
