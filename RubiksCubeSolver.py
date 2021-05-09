@@ -493,8 +493,8 @@ def validation():
                 edgeCheck[i] = True
     for i in range (12):
         if edgeCheck[i] == False:
-            return False, "The cube is missing an edge with the colours "+cornerList[i][0]+" and "+cornerList[i][1]+"."
-    
+            return False, "The cube is missing an edge with the colours "+edgeList[i][0]+" and "+edgeList[i][1]+"."
+
     #The center pieces has to be validated for whether the way that they are orientated relative to one another is possible.
     #This dictionary contains every single possible way that the cube could be oriented, and how the rest of the center pieces would have to be positioned.
     orientationList = {('green','yellow','orange'):['blue','white','red'],('green','red','yellow'):['blue','orange','white'],('green','white','red'):['blue','yellow','orange'],('green','orange','white'):['blue','red','yellow'],('blue','yellow','red'):['green','white','orange'],('blue','orange','yellow'):['green','red','white'],('blue','white','orange'):['green','yellow','red'],('blue','red','white'):['green','orange','yellow'],('red','yellow','green'):['orange','white','blue'],('red','blue','yellow'):['orange','green','white'],('red','white','blue'):['orange','yellow','green'],('red','green','white'):['orange','blue','yellow'],('orange','yellow','blue'):['red','white','green'],('orange','green','yellow'):['red','blue','white'],('orange','white','green'):['red','yellow','blue'],('orange','blue','white'):['red','green','yellow'],('white','green','orange'):['yellow','blue','red'],('white','red','green'):['yellow','orange','blue'],('white','blue','red'):['yellow','green','orange'],('white','orange','blue'):['yellow','red','green'],('yellow','green','red'):['white','blue','orange'],('yellow','orange','green'):['white','red','blue'],('yellow','blue','orange'):['white','green','red'],('yellow','red','blue'):['white','orange','green']}
@@ -586,7 +586,7 @@ def solve():
                 moveList[requiredMoves[i]]()
 
         if blueFace[2][1] == 'white':
-            possibleMoves = {'green':["B'",'D',"L'","D'"],'red':["B'","L'"],'blue':["B'",'D',"L'","D'"],'orange':['B','R']}
+            possibleMoves = {'green':["B'","D'","L'",'D'],'red':["B'","L'"],'blue':["B'",'D',"L'","D'"],'orange':['B','R']}
             requiredMoves = possibleMoves[whiteFace[2][1]]
             for i in range(len(requiredMoves)):
                 solveMoves.append(requiredMoves[i])
@@ -2042,6 +2042,7 @@ def meanMoves(iterations):
     print("Minimum value = ",min(lengths))
     print("Minimum value scramble = ",scrambles[lengths.index(min(lengths))])
     print("Time taken = ",end - start)
+    print("Average time taken = ",(end - start)/len(lengths))
 
     # fixed bin size
     bins = np.arange(0, 150, 1) # fixed bin size
@@ -2058,7 +2059,6 @@ def meanMoves(iterations):
 #If this is the main file being run, the main function is run.
 if __name__ == '__main__':
     cubeReset()
-    greenFace = 0
-    meanMoves(100000)
+    meanMoves(1000000)
 else:
     cubeReset()

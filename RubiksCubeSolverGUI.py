@@ -1,4 +1,4 @@
-import pygame, time
+import pygame, time, os
 from pygame.locals import *
 from RubiksCubeSolver import *
 
@@ -61,9 +61,15 @@ class Text:
     #Renders and blits the text.
     #The optional down parameter moves the text down by a certain number of lines, which is useful when a lot of text is being shown.
     #The optional colour parameter is to change the colour of the text, otherwise it is black by default.
-    def __init__(self,message,surface,down = 0,textColour = (0,0,0),customPos = False):
+    #The optional title parameter is to make the text bold and underlined.
+    def __init__(self,message,surface,down = 0,textColour = (0,0,0),customPos = False,title = False):
         self.surface = surface
+        #Font is generated.
         font = pygame.font.Font(None, int(round(surface.get_height()/22.5)))
+        #If the text is a title, font is generated differently.
+        if title == True:
+            font.bold = True
+            font.underline = True
         self.text = font.render(message, 1, textColour, (128,128,128))
         #self.rect is the rectangle of space that the text in.
         self.rect = self.text.get_rect(center=(int(round(surface.get_width()/2)),int(round(surface.get_height()/10)) + (down * int(round(surface.get_height()/22.5)))))
@@ -95,65 +101,115 @@ def mainGUI():
     screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption("Rubik's Cube Solver")
 
+    #Sets the icon
+    icon = pygame.image.load(os.path.join('', 'RubiksCube.png'))
+    pygame.display.set_icon(icon)
+
     #Draws a plain black background for the whole window size.
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((128,128,128))
     screen.blit(background,(0,0))
 
-    #Draws the cube.
-    #Each object belonging to the facelet class is just a polygon with a specified colour and position.
-    #The faceletTop objects represent every facelet on the yellow face in order, starting at 0,0 and then going through every facelet row by row.
-    faceletTop1 = Facelet(screen,colour_dict[yellowFace[0][0]],[5,0,0],[[screen.get_width()/2,screen.get_height()/2*7/12],[screen.get_width()/2*419/384,screen.get_height()/2*47/72],[screen.get_width()/2,screen.get_height()/2*13/18],[screen.get_width()/2*349/384,screen.get_height()/2*47/72]])
-    faceletTop2 = Facelet(screen,colour_dict[yellowFace[0][1]],[5,0,1],[faceletTop1.points[1],[screen.get_width()/2*227/192,faceletTop1.points[2][1]],[faceletTop1.points[1][0],screen.get_height()/2*19/24],faceletTop1.points[2]])
-    faceletTop3 = Facelet(screen,colour_dict[yellowFace[0][2]],[5,0,2],[faceletTop2.points[1],[screen.get_width()/2*163/128,faceletTop2.points[2][1]],[faceletTop2.points[1][0],screen.get_height()/2*31/36],faceletTop2.points[2]])
-    faceletTop4 = Facelet(screen,colour_dict[yellowFace[1][0]],[5,1,0],[faceletTop1.points[3],faceletTop1.points[2],[faceletTop1.points[3][0],faceletTop2.points[2][1]],[screen.get_width()/2*157/192,faceletTop1.points[2][1]]])
-    faceletTop5 = Facelet(screen,colour_dict[yellowFace[1][1]],[5,1,1],[faceletTop1.points[2],faceletTop2.points[2],[screen.get_width()/2,faceletTop3.points[2][1]],faceletTop4.points[2]])
-    faceletTop6 = Facelet(screen,colour_dict[yellowFace[1][2]],[5,1,2],[faceletTop2.points[2],faceletTop3.points[2],[faceletTop2.points[0][0],screen.get_height()/2*67/72],faceletTop5.points[2]])
-    faceletTop7 = Facelet(screen,colour_dict[yellowFace[2][0]],[5,2,0],[faceletTop4.points[3],faceletTop4.points[2],[faceletTop4.points[3][0],faceletTop3.points[2][1]],[screen.get_width()/2*93/128,faceletTop3.points[1][1]]])
-    faceletTop8 = Facelet(screen,colour_dict[yellowFace[2][1]],[5,2,1],[faceletTop4.points[2],faceletTop5.points[2],[faceletTop4.points[0][0],faceletTop6.points[2][1]],faceletTop7.points[2]])
-    faceletTop9 = Facelet(screen,colour_dict[yellowFace[2][2]],[5,2,2],[faceletTop5.points[2],faceletTop6.points[2],[screen.get_width()/2,screen.get_height()/2],faceletTop8.points[2]])
+    #Initial screen shows instructions and resolution input.
+    #Each instruction is a separate text object, each one is shown below the last.
+    text1 = Text("List of controls:", screen, title = True)
+    text2 = Text("Click on the cube to change its colours.", screen, 2)
+    text3 = Text("Escape = Exit", screen, 3)
+    text4 = Text("Space = Scramble cube", screen, 4)
+    text5 = Text("X, Y, Z = Rotate cube around X, Y, or Z axis", screen, 5)
+    text6 = Text("R = Reset cube", screen, 6)
+    text6 = Text("S = Enter solve mode", screen, 7)
+    text7 = Text("During solve mode:", screen, 9,  title = True)
+    text8 = Text("Right arrow key = Show next move", screen, 11)
+    text9 = Text("Left arrow key = Undo last move", screen, 12)
+    text10 = Text("Up arrow key = Show solve automatically", screen, 13)
+    text11 = Text("Down arrow key = Undo solve automatically", screen, 14)
+    text12 = Text("S = Exit solve mode", screen, 15)
+    text13 = Text("Press enter to proceed.", screen, 17)
 
-    #faceletLeft objects work exactly the same as faceletTop, but instead represent the green face.
-    faceletLeft1 = Facelet(screen,colour_dict[greenFace[0][0]],[0,0,0],[faceletTop7.points[3],faceletTop7.points[2],[faceletTop7.points[0][0],screen.get_height()/2*77/72],[screen.get_width()/2*93/128,screen.get_height()/2]])
-    faceletLeft2 = Facelet(screen,colour_dict[greenFace[0][1]],[0,0,1],[faceletTop8.points[3],faceletTop8.points[2],[faceletTop8.points[0][0],screen.get_height()/2*41/36],faceletLeft1.points[2]])
-    faceletLeft3 = Facelet(screen,colour_dict[greenFace[0][2]],[0,0,2],[faceletTop9.points[3],faceletTop9.points[2],[faceletTop9.points[0][0],screen.get_height()/2*29/24],faceletLeft2.points[2]])
-    faceletLeft4 = Facelet(screen,colour_dict[greenFace[1][0]],[0,1,0],[faceletLeft1.points[3],faceletLeft1.points[2],[faceletLeft1.points[1][0],screen.get_height()/2*23/18],[faceletLeft1.points[0][0],faceletLeft3.points[2][1]]])
-    faceletLeft5 = Facelet(screen,colour_dict[greenFace[1][1]],[0,1,1],[faceletLeft2.points[3],faceletLeft2.points[2],[faceletLeft2.points[1][0],screen.get_height()/2*97/72],faceletLeft4.points[2]])
-    faceletLeft6 = Facelet(screen,colour_dict[greenFace[1][2]],[0,1,2],[faceletLeft3.points[3],faceletLeft3.points[2],[faceletLeft3.points[1][0],screen.get_height()/2*17/12],faceletLeft5.points[2]])
-    faceletLeft7 = Facelet(screen,colour_dict[greenFace[2][0]],[0,2,0],[faceletLeft4.points[3],faceletLeft4.points[2],[faceletLeft4.points[1][0],screen.get_height()/2*107/72],[faceletLeft1.points[0][0],faceletLeft6.points[2][1]]])
-    faceletLeft8 = Facelet(screen,colour_dict[greenFace[2][1]],[0,2,1],[faceletLeft5.points[3],faceletLeft5.points[2],[faceletLeft5.points[1][0],screen.get_height()/2*14/9],faceletLeft7.points[2]])
-    faceletLeft9 = Facelet(screen,colour_dict[greenFace[2][2]],[0,2,2],[faceletLeft6.points[3],faceletLeft6.points[2],[faceletLeft6.points[1][0],screen.get_height()/2*13/8],faceletLeft8.points[2]])
-
-    #faceletRight objects work exactly the same as faceletTop and faceletRight, but instead represent the orange face.
-    faceletRight1 = Facelet(screen,colour_dict[orangeFace[0][0]],[3,0,0],[faceletTop9.points[2],faceletTop9.points[1],[faceletTop1.points[1][0],faceletLeft3.points[3][1]],faceletLeft3.points[2]])
-    faceletRight2 = Facelet(screen,colour_dict[orangeFace[0][1]],[3,0,1],[faceletTop9.points[1],faceletTop6.points[1],[faceletTop2.points[1][0],faceletLeft2.points[3][1]],faceletRight1.points[2]])
-    faceletRight3 = Facelet(screen,colour_dict[orangeFace[0][2]],[3,0,2],[faceletTop6.points[1],faceletTop3.points[1],[faceletTop3.points[1][0],faceletLeft1.points[3][1]],faceletRight2.points[2]])
-    faceletRight4 = Facelet(screen,colour_dict[orangeFace[1][0]],[3,1,0],[faceletRight1.points[3],faceletRight1.points[2],[faceletTop1.points[1][0],faceletLeft6.points[3][1]],faceletLeft6.points[2]])
-    faceletRight5 = Facelet(screen,colour_dict[orangeFace[1][1]],[3,1,1],[faceletRight2.points[3],faceletRight2.points[2],[faceletTop2.points[1][0],faceletLeft5.points[3][1]],faceletRight4.points[2]])
-    faceletRight6 = Facelet(screen,colour_dict[orangeFace[1][2]],[3,1,2],[faceletRight3.points[3],faceletRight3.points[2],[faceletTop3.points[1][0],faceletLeft4.points[3][1]],faceletRight5.points[2]])
-    faceletRight7 = Facelet(screen,colour_dict[orangeFace[2][0]],[3,2,0],[faceletRight4.points[3],faceletRight4.points[2],[faceletTop1.points[1][0],faceletLeft9.points[3][1]],faceletLeft9.points[2]])
-    faceletRight8 = Facelet(screen,colour_dict[orangeFace[2][1]],[3,2,1],[faceletRight5.points[3],faceletRight5.points[2],[faceletTop2.points[1][0],faceletLeft8.points[3][1]],faceletRight7.points[2]])
-    faceletRight9 = Facelet(screen,colour_dict[orangeFace[2][2]],[3,2,2],[faceletRight6.points[3],faceletRight6.points[2],[faceletTop3.points[1][0],faceletLeft7.points[3][1]],faceletRight8.points[2]])
-
-    #Full facelet list that can be used to control all facelets together.
-    faceletList = [faceletTop1,faceletTop2,faceletTop3,faceletTop4,faceletTop5,faceletTop6,faceletTop7,faceletTop8,faceletTop9,faceletLeft1,faceletLeft2,faceletLeft3,faceletLeft4,faceletLeft5,faceletLeft6,faceletLeft7,faceletLeft8,faceletLeft9,faceletRight1,faceletRight2,faceletRight3,faceletRight4,faceletRight5,faceletRight6,faceletRight7,faceletRight8,faceletRight9]
-
-    #Updates the display.
+    #Display is updated to show text.
     pygame.display.flip()
 
-    #Resets cubeState.
-    cubeState = cubeReset()
+    #Loop that keeps instructions open.
+    #Going keeps track of whether the program should be running.
+    going = True
+    #Waiting keeps track of whether the instructions should be showing.
+    waiting = True
+    while waiting == True:
+        for event in pygame.event.get():
+            #If the user presses quit, the program ends.
+            if event.type == QUIT:
+                waiting = False
+                going = False
+            #If the user presses escape, the program ends.
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                waiting = False
+                going = False
+            #If the user presses enter, the cube can be shown.
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                waiting = False
 
-    #Some invisible text to stop program from breaking the first time it tries to hide the text.
-    text = Text('',screen)
+    #If the user has not quit, the cube is displayed.
+    if going == True:
+        #Instructions are covered by a new background.
+        screen.blit(background,(0,0))
+
+        #Draws the cube.
+        #Each object belonging to the facelet class is just a polygon with a specified colour and position.
+        #The faceletTop objects represent every facelet on the yellow face in order, starting at 0,0 and then going through every facelet row by row.
+        faceletTop1 = Facelet(screen,colour_dict[yellowFace[0][0]],[5,0,0],[[screen.get_width()/2,screen.get_height()/2*7/12],[screen.get_width()/2*419/384,screen.get_height()/2*47/72],[screen.get_width()/2,screen.get_height()/2*13/18],[screen.get_width()/2*349/384,screen.get_height()/2*47/72]])
+        faceletTop2 = Facelet(screen,colour_dict[yellowFace[0][1]],[5,0,1],[faceletTop1.points[1],[screen.get_width()/2*227/192,faceletTop1.points[2][1]],[faceletTop1.points[1][0],screen.get_height()/2*19/24],faceletTop1.points[2]])
+        faceletTop3 = Facelet(screen,colour_dict[yellowFace[0][2]],[5,0,2],[faceletTop2.points[1],[screen.get_width()/2*163/128,faceletTop2.points[2][1]],[faceletTop2.points[1][0],screen.get_height()/2*31/36],faceletTop2.points[2]])
+        faceletTop4 = Facelet(screen,colour_dict[yellowFace[1][0]],[5,1,0],[faceletTop1.points[3],faceletTop1.points[2],[faceletTop1.points[3][0],faceletTop2.points[2][1]],[screen.get_width()/2*157/192,faceletTop1.points[2][1]]])
+        faceletTop5 = Facelet(screen,colour_dict[yellowFace[1][1]],[5,1,1],[faceletTop1.points[2],faceletTop2.points[2],[screen.get_width()/2,faceletTop3.points[2][1]],faceletTop4.points[2]])
+        faceletTop6 = Facelet(screen,colour_dict[yellowFace[1][2]],[5,1,2],[faceletTop2.points[2],faceletTop3.points[2],[faceletTop2.points[0][0],screen.get_height()/2*67/72],faceletTop5.points[2]])
+        faceletTop7 = Facelet(screen,colour_dict[yellowFace[2][0]],[5,2,0],[faceletTop4.points[3],faceletTop4.points[2],[faceletTop4.points[3][0],faceletTop3.points[2][1]],[screen.get_width()/2*93/128,faceletTop3.points[1][1]]])
+        faceletTop8 = Facelet(screen,colour_dict[yellowFace[2][1]],[5,2,1],[faceletTop4.points[2],faceletTop5.points[2],[faceletTop4.points[0][0],faceletTop6.points[2][1]],faceletTop7.points[2]])
+        faceletTop9 = Facelet(screen,colour_dict[yellowFace[2][2]],[5,2,2],[faceletTop5.points[2],faceletTop6.points[2],[screen.get_width()/2,screen.get_height()/2],faceletTop8.points[2]])
+
+        #faceletLeft objects work exactly the same as faceletTop, but instead represent the green face.
+        faceletLeft1 = Facelet(screen,colour_dict[greenFace[0][0]],[0,0,0],[faceletTop7.points[3],faceletTop7.points[2],[faceletTop7.points[0][0],screen.get_height()/2*77/72],[screen.get_width()/2*93/128,screen.get_height()/2]])
+        faceletLeft2 = Facelet(screen,colour_dict[greenFace[0][1]],[0,0,1],[faceletTop8.points[3],faceletTop8.points[2],[faceletTop8.points[0][0],screen.get_height()/2*41/36],faceletLeft1.points[2]])
+        faceletLeft3 = Facelet(screen,colour_dict[greenFace[0][2]],[0,0,2],[faceletTop9.points[3],faceletTop9.points[2],[faceletTop9.points[0][0],screen.get_height()/2*29/24],faceletLeft2.points[2]])
+        faceletLeft4 = Facelet(screen,colour_dict[greenFace[1][0]],[0,1,0],[faceletLeft1.points[3],faceletLeft1.points[2],[faceletLeft1.points[1][0],screen.get_height()/2*23/18],[faceletLeft1.points[0][0],faceletLeft3.points[2][1]]])
+        faceletLeft5 = Facelet(screen,colour_dict[greenFace[1][1]],[0,1,1],[faceletLeft2.points[3],faceletLeft2.points[2],[faceletLeft2.points[1][0],screen.get_height()/2*97/72],faceletLeft4.points[2]])
+        faceletLeft6 = Facelet(screen,colour_dict[greenFace[1][2]],[0,1,2],[faceletLeft3.points[3],faceletLeft3.points[2],[faceletLeft3.points[1][0],screen.get_height()/2*17/12],faceletLeft5.points[2]])
+        faceletLeft7 = Facelet(screen,colour_dict[greenFace[2][0]],[0,2,0],[faceletLeft4.points[3],faceletLeft4.points[2],[faceletLeft4.points[1][0],screen.get_height()/2*107/72],[faceletLeft1.points[0][0],faceletLeft6.points[2][1]]])
+        faceletLeft8 = Facelet(screen,colour_dict[greenFace[2][1]],[0,2,1],[faceletLeft5.points[3],faceletLeft5.points[2],[faceletLeft5.points[1][0],screen.get_height()/2*14/9],faceletLeft7.points[2]])
+        faceletLeft9 = Facelet(screen,colour_dict[greenFace[2][2]],[0,2,2],[faceletLeft6.points[3],faceletLeft6.points[2],[faceletLeft6.points[1][0],screen.get_height()/2*13/8],faceletLeft8.points[2]])
+
+        #faceletRight objects work exactly the same as faceletTop and faceletRight, but instead represent the orange face.
+        faceletRight1 = Facelet(screen,colour_dict[orangeFace[0][0]],[3,0,0],[faceletTop9.points[2],faceletTop9.points[1],[faceletTop1.points[1][0],faceletLeft3.points[3][1]],faceletLeft3.points[2]])
+        faceletRight2 = Facelet(screen,colour_dict[orangeFace[0][1]],[3,0,1],[faceletTop9.points[1],faceletTop6.points[1],[faceletTop2.points[1][0],faceletLeft2.points[3][1]],faceletRight1.points[2]])
+        faceletRight3 = Facelet(screen,colour_dict[orangeFace[0][2]],[3,0,2],[faceletTop6.points[1],faceletTop3.points[1],[faceletTop3.points[1][0],faceletLeft1.points[3][1]],faceletRight2.points[2]])
+        faceletRight4 = Facelet(screen,colour_dict[orangeFace[1][0]],[3,1,0],[faceletRight1.points[3],faceletRight1.points[2],[faceletTop1.points[1][0],faceletLeft6.points[3][1]],faceletLeft6.points[2]])
+        faceletRight5 = Facelet(screen,colour_dict[orangeFace[1][1]],[3,1,1],[faceletRight2.points[3],faceletRight2.points[2],[faceletTop2.points[1][0],faceletLeft5.points[3][1]],faceletRight4.points[2]])
+        faceletRight6 = Facelet(screen,colour_dict[orangeFace[1][2]],[3,1,2],[faceletRight3.points[3],faceletRight3.points[2],[faceletTop3.points[1][0],faceletLeft4.points[3][1]],faceletRight5.points[2]])
+        faceletRight7 = Facelet(screen,colour_dict[orangeFace[2][0]],[3,2,0],[faceletRight4.points[3],faceletRight4.points[2],[faceletTop1.points[1][0],faceletLeft9.points[3][1]],faceletLeft9.points[2]])
+        faceletRight8 = Facelet(screen,colour_dict[orangeFace[2][1]],[3,2,1],[faceletRight5.points[3],faceletRight5.points[2],[faceletTop2.points[1][0],faceletLeft8.points[3][1]],faceletRight7.points[2]])
+        faceletRight9 = Facelet(screen,colour_dict[orangeFace[2][2]],[3,2,2],[faceletRight6.points[3],faceletRight6.points[2],[faceletTop3.points[1][0],faceletLeft7.points[3][1]],faceletRight8.points[2]])
+
+        #Full facelet list that can be used to control all facelets together.
+        faceletList = [faceletTop1,faceletTop2,faceletTop3,faceletTop4,faceletTop5,faceletTop6,faceletTop7,faceletTop8,faceletTop9,faceletLeft1,faceletLeft2,faceletLeft3,faceletLeft4,faceletLeft5,faceletLeft6,faceletLeft7,faceletLeft8,faceletLeft9,faceletRight1,faceletRight2,faceletRight3,faceletRight4,faceletRight5,faceletRight6,faceletRight7,faceletRight8,faceletRight9]
+
+        #The grid is drawn onto the cube to make the facelets more distinguishable.
+        pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],int(round(screen.get_height()/180)))
+
+        #Updates the display.
+        pygame.display.flip()
+
+        #Resets cubeState.
+        cubeState = cubeReset()
+
+        #Some invisible text to stop program from breaking the first time it tries to hide the text.
+        text = Text('',screen)
 
     #Keeps track of whether the solve is currently being displayed.
     solving = False
     #Keeps track of how many moves have been displayed in this solve.
     moveCount = 0
     #Window continues to be displayed and repeatedly updated while the condition is true.
-    going = True
     while going == True:
         #If the solve is not being shown, the program continues as normal.
         if solving == False:
@@ -178,6 +234,11 @@ def mainGUI():
                     screen.blit(background,(0,0))
                     #Scramble moves are displayed to the user.
                     text = Text(scrambleMoves, screen)
+
+                #If the user presses R, the cube is reset.
+                elif event.type == KEYDOWN and event.key == K_r:
+                    #Cube state is set to a solved cube.
+                    cubeState = cubeReset()
 
                 #If the user clicks, the facelet that is clicked on cycles to a new colour.
                 elif event.type == MOUSEBUTTONUP:
@@ -386,6 +447,65 @@ def mainGUI():
 
                             #Pressing the up arrow again pauses the solve.
                             elif event.type == KEYDOWN and event.key == K_UP:
+                                auto = False
+
+                #If the user presses the down arrow key, the solve is reversed automatically.
+                elif event.type == KEYDOWN and event.key == K_DOWN:
+                    auto = True
+                    while auto == True:
+                        #Every move has a slight delay to show each move separately.
+                        time.sleep(0.1)
+                        #Checks if every move has been shown.
+                        if moveCount == 0:
+                            #Solve is no longer being displayed.
+                            auto = False
+                        else:
+                            #Black text is reapplied over red text.
+                            for text in solveText:
+                                text.showText()
+
+                            #If the solve is not done showing, the next move can be shown.
+                            moveCount = moveCount - 1
+                            moveList[moveReversal(solveMoves[moveCount])]()
+
+                            #Red text covers the solve moves to show which moves have already been done.
+                            #Loops for how many lines of moves have already been done, plus one for the current line.
+                            for i in range(moveCount // 30 + 1):
+                                #For the number of lines of moves that are fully done, each line is written again in red.
+                                for j in range(i):
+                                    displayedMoves = (" ".join(splitSolveMoves[j]))
+                                    Text(displayedMoves,screen,j,(255,0,0))
+                                #Checks if this is the last loop.
+                                if i == moveCount // 30:
+                                    #A new list of every move that has been done on the newest line is made.
+                                    tempTextList = []
+                                    for j in range(moveCount % 30):
+                                        tempTextList.append(splitSolveMoves[i][j])
+                                    #Every move in this list is made red.
+                                    displayedMoves = (" ".join(tempTextList))
+                                    #The old text's position is used to write the text directly over the old text.
+                                    Text(displayedMoves,screen,i,(255,0,0),(solveText[i].pos))
+                            
+                        #The facelets are constantly updated to show how they look after any change to the cube happens.
+                        for facelets in faceletList:
+                            facelets.update(cubeState)
+                        #The grid is drawn onto the cube to make the facelets more distinguishable.
+                        pygame.draw.lines(screen,(0,0,0),False,[faceletLeft7.points[3],faceletRight7.points[3],faceletRight9.points[2],faceletRight6.points[2],faceletRight4.points[3],faceletLeft4.points[3],faceletLeft1.points[3],faceletLeft3.points[2],faceletRight3.points[2],faceletRight3.points[1],faceletRight1.points[0],faceletLeft1.points[0],faceletTop1.points[0],faceletTop3.points[1],faceletRight9.points[2],faceletRight9.points[3],faceletTop3.points[2],faceletTop1.points[3],faceletTop4.points[3],faceletTop6.points[2],faceletRight8.points[3],faceletRight7.points[3],faceletTop9.points[2],faceletTop8.points[2],faceletLeft8.points[2],faceletLeft8.points[3],faceletTop8.points[3],faceletTop7.points[3],faceletLeft7.points[3],faceletLeft7.points[2],faceletTop7.points[2],faceletTop2.points[0],faceletTop2.points[1],faceletTop8.points[2]],int(round(screen.get_height()/180)))        
+                        #The display is updated at the end of every loop.
+                        pygame.display.flip()
+
+                        for event in pygame.event.get():
+                            #If the user presses quit, the program ends.
+                            if event.type == QUIT:
+                                auto = False
+                                going = False
+                            #If the user presses escape, the program ends.
+                            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                                auto = False
+                                going = False
+
+                            #Pressing the up arrow again pauses the solve.
+                            elif event.type == KEYDOWN and event.key == K_DOWN:
                                 auto = False
 
             #The facelets are constantly updated to show how they look after any change to the cube happens.
