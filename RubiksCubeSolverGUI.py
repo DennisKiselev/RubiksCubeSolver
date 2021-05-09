@@ -195,6 +195,9 @@ def mainGUI():
                     elif event.key == K_9:
                         resolution = int(str(resolution) + "9")
 
+            if len(str(resolution)) > 10:
+                resolution = resolution // 10
+
             text14 = Text("Height (Pixels) = "+str(resolution),screen, 17)
             pygame.display.update(text14.rect)
 
@@ -300,6 +303,7 @@ def mainGUI():
                 elif event.type == KEYDOWN and event.key == K_r:
                     #Cube state is set to a solved cube.
                     cubeState = cubeReset()
+                    text.hide()
 
                 #If the user clicks, the facelet that is clicked on cycles to a new colour.
                 elif event.type == MOUSEBUTTONUP:
